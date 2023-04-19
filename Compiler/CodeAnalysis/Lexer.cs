@@ -1,6 +1,6 @@
 ﻿namespace Compiler.CodeAnalysis
 {
-    class Lexer
+    internal class Lexer
     {
         private readonly string text;
         private int postion;

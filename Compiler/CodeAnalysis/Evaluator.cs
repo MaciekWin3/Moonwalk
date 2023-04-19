@@ -2,7 +2,7 @@
 
 namespace Compiler.CodeAnalysis
 {
-    public class Evaluator
+    public sealed class Evaluator
     {
         public ExpressionSyntax Root { get; }
 
@@ -16,7 +16,7 @@ namespace Compiler.CodeAnalysis
             return EvaluateExpression(Root);
         }
 
-        public int CalculateExpression(SyntaxKind syntaxKind, int left, int right) =>
+        public static int CalculateExpression(SyntaxKind syntaxKind, int left, int right) =>
             syntaxKind switch
             {
                 SyntaxKind.PlusToken => left + right,
@@ -28,9 +28,9 @@ namespace Compiler.CodeAnalysis
 
         private int EvaluateExpression(ExpressionSyntax node)
         {
-            if (node is NumberExpressionSyntax n)
+            if (node is LiteralExpressionSyntax n)
             {
-                return (int)n.NumberToken.Value;
+                return (int)n.LiteralToken.Value;
             }
             if (node is BinaryExpressionSyntax b)
             {

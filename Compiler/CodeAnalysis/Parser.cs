@@ -2,7 +2,7 @@
 
 namespace Compiler.CodeAnalysis
 {
-    public class Parser
+    internal sealed class Parser
     {
         private readonly SyntaxToken[] tokens;
         private int position;
@@ -46,7 +46,7 @@ namespace Compiler.CodeAnalysis
             return current;
         }
 
-        private SyntaxToken Match(SyntaxKind kind)
+        private SyntaxToken MatchToken(SyntaxKind kind)
         {
             if (Current.Kind == kind)
             {
@@ -57,16 +57,16 @@ namespace Compiler.CodeAnalysis
             return new SyntaxToken(kind, Current.Position, null!, null!);
         }
 
-        private ExpressionSyntax ParseExpression()
-        {
-            return ParseTerm();
-        }
-
         public SyntaxTree Parse()
         {
             var expresion = ParseTerm();
-            var enfOfFileToken = Match(SyntaxKind.EndOfFileToken);
+            var enfOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
             return new SyntaxTree(diagnostics, expresion, enfOfFileToken);
+        }
+
+        private ExpressionSyntax ParseExpression()
+        {
+            return ParseTerm();
         }
 
         private ExpressionSyntax ParseTerm()
@@ -101,12 +101,12 @@ namespace Compiler.CodeAnalysis
             {
                 var left = NextToken();
                 var expression = ParseExpression();
-                var right = Match(SyntaxKind.CloseParenthesisToken);
+                var right = MatchToken(SyntaxKind.CloseParenthesisToken);
                 return new ParenthesizedExpressionSyntax(left, expression, right);
 
             }
-            var numberToken = Match(SyntaxKind.NumberToken);
-            return new NumberExpressionSyntax(numberToken);
+            var numberToken = MatchToken(SyntaxKind.NumberToken);
+            return new LiteralExpressionSyntax(numberToken);
         }
     }
 }

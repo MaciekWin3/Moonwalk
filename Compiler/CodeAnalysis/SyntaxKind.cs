@@ -2,16 +2,19 @@
 {
     public enum SyntaxKind
     {
-        NumberToken,
+        // Tokens
+        InvalidToken,
+        EndOfFileToken,
         WhitespaceToken,
+        NumberToken,
         PlusToken,
         MinusToken,
         StarToken,
         SlashToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
-        InvalidToken,
-        EndOfFileToken,
+
+        // Expressions
         NumberExpression,
         BinaryExpression,
         ParenthesizedExpression
