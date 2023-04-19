@@ -69,7 +69,7 @@ namespace Compiler.CodeAnalysis
             var left = ParsePrimaryExpression();
             while (true)
             {
-                var precedence = GetBinaryOperatorPrecedence(Current.Kind);
+                var precedence = Current.Kind.GetBinaryOperatorPrecedence();
                 if (precedence == 0 || precedence <= parentPrecedence)
                 {
                     break;
@@ -82,16 +82,6 @@ namespace Compiler.CodeAnalysis
             }
             return left;
         }
-
-        private static int GetBinaryOperatorPrecedence(SyntaxKind kind) => kind switch
-        {
-            SyntaxKind.StarToken => 2,
-            SyntaxKind.SlashToken => 2,
-            SyntaxKind.PlusToken => 1,
-            SyntaxKind.MinusToken => 1,
-            _ => 0,
-        };
-
 
         private ExpressionSyntax ParsePrimaryExpression()
         {
