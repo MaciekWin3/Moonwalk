@@ -19,7 +19,7 @@
             postion++;
         }
 
-        public SyntaxToken NextToken()
+        public SyntaxToken Lex()
         {
             // <numbers>
             // + = * / ( )
@@ -59,29 +59,20 @@
                 return new SyntaxToken(SyntaxKind.WhitespaceToken, start, tokenText, null!);
             }
 
-            if (Current == '+')
+            switch (Current)
             {
-                return new SyntaxToken(SyntaxKind.PlusToken, postion++, "+", null!);
-            }
-            if (Current == '-')
-            {
-                return new SyntaxToken(SyntaxKind.MinusToken, postion++, "-", null!);
-            }
-            if (Current == '*')
-            {
-                return new SyntaxToken(SyntaxKind.StarToken, postion++, "*", null!);
-            }
-            if (Current == '/')
-            {
-                return new SyntaxToken(SyntaxKind.SlashToken, postion++, "/", null!);
-            }
-            if (Current == '(')
-            {
-                return new SyntaxToken(SyntaxKind.OpenParenthesisToken, postion++, "(", null!);
-            }
-            if (Current == ')')
-            {
-                return new SyntaxToken(SyntaxKind.CloseParenthesisToken, postion++, ")", null!);
+                case '+':
+                    return new SyntaxToken(SyntaxKind.PlusToken, postion++, "+", null!);
+                case '-':
+                    return new SyntaxToken(SyntaxKind.MinusToken, postion++, "-", null!);
+                case '*':
+                    return new SyntaxToken(SyntaxKind.StarToken, postion++, "*", null!);
+                case '/':
+                    return new SyntaxToken(SyntaxKind.SlashToken, postion++, "/", null!);
+                case '(':
+                    return new SyntaxToken(SyntaxKind.OpenParenthesisToken, postion++, "(", null!);
+                case ')':
+                    return new SyntaxToken(SyntaxKind.CloseParenthesisToken, postion++, ")", null!);
             }
 
             diagnostics.Add($"Error: bad character in input: '{Current}'");

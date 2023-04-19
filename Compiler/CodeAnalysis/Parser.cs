@@ -15,7 +15,7 @@ namespace Compiler.CodeAnalysis
             SyntaxToken token;
             do
             {
-                token = lexer.NextToken();
+                token = lexer.Lex();
                 if (token.Kind != SyntaxKind.WhitespaceToken && token.Kind != SyntaxKind.InvalidToken)
                 {
                     tokens.Add(token);
@@ -59,41 +59,39 @@ namespace Compiler.CodeAnalysis
 
         public SyntaxTree Parse()
         {
-            var expresion = ParseTerm();
+            var expresion = ParseExpression();
             var enfOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
             return new SyntaxTree(diagnostics, expresion, enfOfFileToken);
         }
 
-        private ExpressionSyntax ParseExpression()
-        {
-            return ParseTerm();
-        }
-
-        private ExpressionSyntax ParseTerm()
-        {
-            var left = ParseFactor();
-            while (Current.Kind == SyntaxKind.PlusToken
-                || Current.Kind == SyntaxKind.MinusToken)
-            {
-                var operatorToken = NextToken();
-                var right = ParseFactor();
-                left = new BinaryExpressionSyntax(left, operatorToken, right);
-            }
-            return left;
-        }
-
-        private ExpressionSyntax ParseFactor()
+        private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
         {
             var left = ParsePrimaryExpression();
-            while (Current.Kind == SyntaxKind.StarToken
-                || Current.Kind == SyntaxKind.SlashToken)
+            while (true)
             {
+                var precedence = GetBinaryOperatorPrecedence(Current.Kind);
+                if (precedence == 0 || precedence <= parentPrecedence)
+                {
+                    break;
+                }
+
                 var operatorToken = NextToken();
-                var right = ParsePrimaryExpression();
+                var right = ParseExpression(precedence);
                 left = new BinaryExpressionSyntax(left, operatorToken, right);
+
             }
             return left;
         }
+
+        private static int GetBinaryOperatorPrecedence(SyntaxKind kind) => kind switch
+        {
+            SyntaxKind.StarToken => 2,
+            SyntaxKind.SlashToken => 2,
+            SyntaxKind.PlusToken => 1,
+            SyntaxKind.MinusToken => 1,
+            _ => 0,
+        };
+
 
         private ExpressionSyntax ParsePrimaryExpression()
         {
