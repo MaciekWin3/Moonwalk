@@ -13,5 +13,13 @@ namespace Compiler
                 SyntaxKind.MinusToken => 1,
                 _ => 0,
             };
+
+        public static int GetUnaryOperatorPrecedence(this SyntaxKind kind) =>
+            kind switch
+            {
+                SyntaxKind.PlusToken => 3,
+                SyntaxKind.MinusToken => 3,
+                _ => 0,
+            };
     }
 }
