@@ -1,4 +1,4 @@
-﻿using Compiler.CodeAnalysis;
+﻿using Compiler.CodeAnalysis.Syntax;
 
 namespace Compiler
 {

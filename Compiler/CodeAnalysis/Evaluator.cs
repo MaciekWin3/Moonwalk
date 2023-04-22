@@ -1,4 +1,5 @@
-﻿using Compiler.CodeAnalysis.Expressions;
+﻿using Compiler.CodeAnalysis.Syntax;
+using Compiler.CodeAnalysis.Syntax.Expressions;
 
 namespace Compiler.CodeAnalysis
 {

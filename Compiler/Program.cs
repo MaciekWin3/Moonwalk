@@ -1,6 +1,7 @@
 ﻿// Repl
 
 using Compiler.CodeAnalysis;
+using Compiler.CodeAnalysis.Syntax;
 
 bool showTree = false;
 while (true)
@@ -26,7 +27,6 @@ while (true)
     }
 
     var syntaxTree = SyntaxTree.Parse(line);
-
 
     if (showTree)
     {
