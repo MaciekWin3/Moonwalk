@@ -1,6 +1,7 @@
 ﻿// Repl
 
 using Compiler.CodeAnalysis;
+using Compiler.CodeAnalysis.Binding;
 using Compiler.CodeAnalysis.Syntax;
 
 bool showTree = false;
@@ -27,6 +28,10 @@ while (true)
     }
 
     var syntaxTree = SyntaxTree.Parse(line);
+    var binder = new Binder();
+    var boundExpression = binder.BindExpression(syntaxTree.Root);
+
+    var diagnostics = syntaxTree.Diagnostics.Concat(binder.Diagnostics).ToArray();
 
     if (showTree)
     {
@@ -35,9 +40,9 @@ while (true)
         Console.ResetColor();
     }
 
-    if (!syntaxTree.Diagnostics.Any())
+    if (!diagnostics.Any())
     {
-        var e = new Evaluator(syntaxTree.Root);
+        var e = new Evaluator(boundExpression);
         var result = e.Evaluate();
         Console.WriteLine(result);
     }

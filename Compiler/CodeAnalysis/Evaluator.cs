@@ -1,13 +1,12 @@
-﻿using Compiler.CodeAnalysis.Syntax;
-using Compiler.CodeAnalysis.Syntax.Expressions;
+﻿using Compiler.CodeAnalysis.Binding;
 
 namespace Compiler.CodeAnalysis
 {
-    public sealed class Evaluator
+    internal sealed class Evaluator
     {
-        public ExpressionSyntax Root { get; }
+        public BoundExpression Root { get; }
 
-        public Evaluator(ExpressionSyntax root)
+        public Evaluator(BoundExpression root)
         {
             Root = root;
         }
@@ -17,52 +16,44 @@ namespace Compiler.CodeAnalysis
             return EvaluateExpression(Root);
         }
 
-        public static int CalculateExpression(SyntaxKind syntaxKind, int left, int right) =>
-            syntaxKind switch
-            {
-                SyntaxKind.PlusToken => left + right,
-                SyntaxKind.MinusToken => left - right,
-                SyntaxKind.StarToken => left * right,
-                SyntaxKind.SlashToken => left / right,
-                _ => throw new NotSupportedException($"Error: Unexpected binary operator {syntaxKind}")
-            };
-
-        private int EvaluateExpression(ExpressionSyntax node)
+        private int EvaluateExpression(BoundExpression node)
         {
-            if (node is LiteralExpressionSyntax n)
+            if (node is BoundLiteralExpression n)
             {
-                return (int)n.LiteralToken.Value;
+                return (int)n.Value;
             }
 
-            if (node is UnaryExpressionSyntax u)
+            if (node is BoundUnaryExpression u)
             {
                 var operand = EvaluateExpression(u.Operand);
 
-                if (u.OperatorToken.Kind == SyntaxKind.PlusToken)
+                return u.OperatorKind switch
                 {
-                    return operand;
-                }
-
-                if (u.OperatorToken.Kind == SyntaxKind.MinusToken)
-                {
-                    return -operand;
-                }
-
-                throw new Exception($"Error: Unexpected unary operator {u.OperatorToken.Kind}");
+                    BoundUnaryOperatorKind.Negation => operand,
+                    BoundUnaryOperatorKind.Identity => -operand,
+                    _ => throw new Exception($"Error: Unexpected unary operator {u.OperatorKind}")
+                };
             }
 
-            if (node is BinaryExpressionSyntax b)
+            if (node is BoundBinaryExpression b)
             {
                 var left = EvaluateExpression(b.Left);
                 var right = EvaluateExpression(b.Right);
-                return CalculateExpression(b.OperatorToken.Kind, left, right);
+                return CalculateExpression(b.OperatorKind, left, right);
             }
 
-            if (node is ParenthesizedExpressionSyntax p)
-            {
-                return EvaluateExpression(p.Expression);
-            }
             throw new Exception($"Error: Unexpected node {node.Kind}");
         }
+
+        private static int CalculateExpression(BoundBinaryOperatorKind syntaxKind, int left, int right) =>
+            syntaxKind switch
+            {
+
+                BoundBinaryOperatorKind.Addition => left + right,
+                BoundBinaryOperatorKind.Subtraction => left - right,
+                BoundBinaryOperatorKind.Multiplication => left * right,
+                BoundBinaryOperatorKind.Division => left / right,
+                _ => throw new NotSupportedException($"Error: Unexpected binary operator {syntaxKind}")
+            };
     }
 }
