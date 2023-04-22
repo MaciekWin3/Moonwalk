@@ -14,6 +14,9 @@
         OpenParenthesisToken,
         CloseParenthesisToken,
         IndentifierToken,
+        BangToken,
+        AmpersandAmpersandToken,
+        PipePipeToken,
 
         // Keywords
         FalseKeyword,

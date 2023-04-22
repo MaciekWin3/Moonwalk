@@ -52,24 +52,41 @@ namespace Compiler.CodeAnalysis.Binding
 
         private BoundUnaryOperatorKind? BindUnaryOperatorKind(SyntaxKind kind, Type operandType)
         {
-            if (operandType != typeof(int))
+            if (operandType == typeof(int))
             {
-                return null;
+                return DetermineUnaryOperatorKind(kind);
             }
-            return BindUnaryOperatorKind2(kind);
+            if (operandType == typeof(bool))
+            {
+                switch (kind)
+                {
+                    case SyntaxKind.BangToken:
+                        return BoundUnaryOperatorKind.LogicalNegation;
+                }
+            }
+            return null;
         }
 
         private BoundBinaryOperatorKind? BindBinaryOperatorKind(SyntaxKind kind, Type leftType, Type rightType)
         {
-            if (leftType != typeof(int) || rightType != typeof(int))
+            if (leftType == typeof(int) && rightType == typeof(int))
             {
-                return null;
+                return DetermineBinaryOperatorKind(kind);
             }
-            return BindBinaryOperatorKind2(kind);
-
+            if (leftType == typeof(bool) && rightType == typeof(bool))
+            {
+                switch (kind)
+                {
+                    case SyntaxKind.AmpersandAmpersandToken:
+                        return BoundBinaryOperatorKind.LogicalAnd;
+                    case SyntaxKind.PipePipeToken:
+                        return BoundBinaryOperatorKind.LogicalOr;
+                }
+            }
+            return null;
         }
 
-        private BoundUnaryOperatorKind BindUnaryOperatorKind2(SyntaxKind kind) =>
+        private BoundUnaryOperatorKind DetermineUnaryOperatorKind(SyntaxKind kind) =>
             kind switch
             {
                 SyntaxKind.PlusToken => BoundUnaryOperatorKind.Identity,
@@ -77,7 +94,7 @@ namespace Compiler.CodeAnalysis.Binding
                 _ => throw new Exception($"Unexpected unary operator {kind}")
             };
 
-        private BoundBinaryOperatorKind BindBinaryOperatorKind2(SyntaxKind kind) =>
+        private BoundBinaryOperatorKind DetermineBinaryOperatorKind(SyntaxKind kind) =>
             kind switch
             {
                 SyntaxKind.PlusToken => BoundBinaryOperatorKind.Addition,

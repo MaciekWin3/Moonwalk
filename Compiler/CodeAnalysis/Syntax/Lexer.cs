@@ -3,7 +3,7 @@
     internal class Lexer
     {
         private readonly string text;
-        private int postion;
+        private int position;
         private List<string> diagnostics = new();
         public IEnumerable<string> Diagnostics => diagnostics;
 
@@ -12,11 +12,21 @@
             this.text = text;
         }
 
-        private char Current => postion >= text.Length ? '\0' : text[postion];
+        private char Current => Peek(0);
+        private char Lookahead => Peek(1);
+        private char Peek(int offset)
+        {
+            var index = position + offset;
+            if (index >= text.Length)
+            {
+                return '\0';
+            }
+            return text[index];
+        }
 
         private void Next()
         {
-            postion++;
+            position++;
         }
 
         public SyntaxToken Lex()
@@ -25,19 +35,19 @@
             // + = * / ( )
             // <whitespace>
 
-            if (postion >= text.Length)
+            if (position >= text.Length)
             {
-                return new SyntaxToken(SyntaxKind.EndOfFileToken, postion, "\0", null!);
+                return new SyntaxToken(SyntaxKind.EndOfFileToken, position, "\0", null!);
             }
 
             if (char.IsDigit(Current))
             {
-                int start = postion;
+                int start = position;
                 while (char.IsDigit(Current))
                 {
                     Next();
                 }
-                int length = postion - start;
+                int length = position - start;
                 string tokenText = text.Substring(start, length);
                 if (!int.TryParse(tokenText, out int value))
                 {
@@ -49,47 +59,61 @@
 
             if (char.IsWhiteSpace(Current))
             {
-                int start = postion;
+                int start = position;
                 while (char.IsWhiteSpace(Current))
                 {
                     Next();
                 }
-                int length = postion - start;
+                int length = position - start;
                 string tokenText = text.Substring(start, length);
                 return new SyntaxToken(SyntaxKind.WhitespaceToken, start, tokenText, null!);
             }
 
             if (char.IsLetter(Current))
             {
-                var start = postion;
+                var start = position;
                 while (char.IsLetter(Current))
                 {
                     Next();
                 }
-                var length = postion - start;
+                var length = position - start;
                 var tokenText = text.Substring(start, length);
-                var kind = SyntaxFacts.GetKeywordKind(text);
+                var kind = SyntaxFacts.GetKeywordKind(tokenText);
                 return new SyntaxToken(kind, start, tokenText, null!);
             }
 
             switch (Current)
             {
                 case '+':
-                    return new SyntaxToken(SyntaxKind.PlusToken, postion++, "+", null!);
+                    return new SyntaxToken(SyntaxKind.PlusToken, position++, "+", null!);
                 case '-':
-                    return new SyntaxToken(SyntaxKind.MinusToken, postion++, "-", null!);
+                    return new SyntaxToken(SyntaxKind.MinusToken, position++, "-", null!);
                 case '*':
-                    return new SyntaxToken(SyntaxKind.StarToken, postion++, "*", null!);
+                    return new SyntaxToken(SyntaxKind.StarToken, position++, "*", null!);
                 case '/':
-                    return new SyntaxToken(SyntaxKind.SlashToken, postion++, "/", null!);
+                    return new SyntaxToken(SyntaxKind.SlashToken, position++, "/", null!);
                 case '(':
-                    return new SyntaxToken(SyntaxKind.OpenParenthesisToken, postion++, "(", null!);
+                    return new SyntaxToken(SyntaxKind.OpenParenthesisToken, position++, "(", null!);
                 case ')':
-                    return new SyntaxToken(SyntaxKind.CloseParenthesisToken, postion++, ")", null!);
+                    return new SyntaxToken(SyntaxKind.CloseParenthesisToken, position++, ")", null!);
+                case '!':
+                    return new SyntaxToken(SyntaxKind.BangToken, position++, "!", null!);
+                case '&':
+                    if (Lookahead == '&')
+                    {
+                        return new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, position += 2, "&&", null!);
+                    }
+                    break;
+                case '|':
+                    if (Lookahead == '|')
+                    {
+                        return new SyntaxToken(SyntaxKind.PipePipeToken, position += 2, "||", null!);
+                    }
+                    break;
             }
 
             diagnostics.Add($"Error: bad character in input: '{Current}'");
-            return new SyntaxToken(SyntaxKind.InvalidToken, postion++, text.Substring(postion - 1, 1), null!);
+            return new SyntaxToken(SyntaxKind.InvalidToken, position++, text.Substring(position - 1, 1), null!);
         }
     }
 }

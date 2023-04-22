@@ -104,14 +104,13 @@ namespace Compiler.CodeAnalysis.Syntax
                         var expression = ParseExpression();
                         var right = MatchToken(SyntaxKind.CloseParenthesisToken);
                         return new ParenthesizedExpressionSyntax(left, expression, right);
-
                     }
 
                 case SyntaxKind.FalseKeyword:
                 case SyntaxKind.TrueKeyword:
                     {
                         var keywordToken = NextToken();
-                        var value = Current.Kind == SyntaxKind.TrueKeyword;
+                        var value = keywordToken.Kind == SyntaxKind.TrueKeyword;
                         return new LiteralExpressionSyntax(keywordToken, value);
                     }
                 default:
@@ -119,9 +118,7 @@ namespace Compiler.CodeAnalysis.Syntax
                         var numberToken = MatchToken(SyntaxKind.NumberToken);
                         return new LiteralExpressionSyntax(numberToken);
                     }
-
             }
-
         }
     }
 }
