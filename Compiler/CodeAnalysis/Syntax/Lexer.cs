@@ -59,6 +59,19 @@
                 return new SyntaxToken(SyntaxKind.WhitespaceToken, start, tokenText, null!);
             }
 
+            if (char.IsLetter(Current))
+            {
+                var start = postion;
+                while (char.IsLetter(Current))
+                {
+                    Next();
+                }
+                var length = postion - start;
+                var tokenText = text.Substring(start, length);
+                var kind = SyntaxFacts.GetKeywordKind(text);
+                return new SyntaxToken(kind, start, tokenText, null!);
+            }
+
             switch (Current)
             {
                 case '+':

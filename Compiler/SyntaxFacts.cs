@@ -21,5 +21,13 @@ namespace Compiler
                 SyntaxKind.MinusToken => 3,
                 _ => 0,
             };
+
+        public static SyntaxKind GetKeywordKind(string text) =>
+            text switch
+            {
+                "true" => SyntaxKind.TrueKeyword,
+                "false" => SyntaxKind.FalseKeyword,
+                _ => SyntaxKind.IndentifierToken
+            };
     }
 }
