@@ -7,14 +7,14 @@ namespace Compiler.CodeAnalysis.Binding
         public SyntaxKind SyntaxKind { get; }
         public BoundUnaryOperatorKind Kind { get; }
         public Type OperandType { get; }
-        public Type ResultType { get; }
+        public Type Type { get; }
 
         private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType, Type resultType)
         {
             SyntaxKind = syntaxKind;
             Kind = kind;
             OperandType = operandType;
-            ResultType = resultType;
+            Type = resultType;
         }
 
         private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType)

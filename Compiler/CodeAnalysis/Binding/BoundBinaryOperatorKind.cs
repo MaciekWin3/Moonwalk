@@ -8,5 +8,7 @@
         Division,
         LogicalAnd,
         LogicalOr,
+        Equals,
+        NotEquals
     }
 }
