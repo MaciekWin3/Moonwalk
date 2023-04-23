@@ -2,15 +2,15 @@
 {
     internal class BoundBinaryExpression : BoundExpression
     {
-        public BoundBinaryOperatorKind OperatorKind { get; }
+        public BoundBinaryOperator Op { get; }
         public BoundExpression Left { get; }
         public BoundExpression Right { get; }
         public override Type Type => Left.Type;
         public override BoundNodeKind Kind => BoundNodeKind.UnaryExpression;
-        public BoundBinaryExpression(BoundExpression left, BoundBinaryOperatorKind operatorKind, BoundExpression right)
+        public BoundBinaryExpression(BoundExpression left, BoundBinaryOperator op, BoundExpression right)
         {
             Left = left;
-            OperatorKind = operatorKind;
+            Op = op;
             Right = right;
         }
     }

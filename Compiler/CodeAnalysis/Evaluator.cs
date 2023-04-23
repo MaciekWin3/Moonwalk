@@ -27,12 +27,12 @@ namespace Compiler.CodeAnalysis
             {
                 var operand = EvaluateExpression(u.Operand);
 
-                return u.OperatorKind switch
+                return u.Op.Kind switch
                 {
                     BoundUnaryOperatorKind.Negation => (int)operand,
                     BoundUnaryOperatorKind.Identity => -(int)operand,
                     BoundUnaryOperatorKind.LogicalNegation => !(bool)operand,
-                    _ => throw new Exception($"Error: Unexpected unary operator {u.OperatorKind}")
+                    _ => throw new Exception($"Error: Unexpected unary operator {u.Op}")
                 };
             }
 
@@ -40,7 +40,7 @@ namespace Compiler.CodeAnalysis
             {
                 var left = EvaluateExpression(b.Left);
                 var right = EvaluateExpression(b.Right);
-                return CalculateExpression(b.OperatorKind, left, right);
+                return CalculateExpression(b.Op.Kind, left, right);
             }
 
             throw new Exception($"Error: Unexpected node {node.Kind}");
