@@ -1,4 +1,6 @@
-﻿namespace Compiler.CodeAnalysis
+﻿using Compiler.CodeAnalysis.Syntax.Expressions;
+
+namespace Compiler.CodeAnalysis.Syntax
 {
     sealed public class SyntaxTree
     {

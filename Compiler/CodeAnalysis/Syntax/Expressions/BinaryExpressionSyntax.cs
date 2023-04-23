@@ -1,6 +1,6 @@
-﻿namespace Compiler.CodeAnalysis.Expressions
+﻿namespace Compiler.CodeAnalysis.Syntax.Expressions
 {
-    sealed class BinaryExpressionSyntax : ExpressionSyntax
+    public sealed class BinaryExpressionSyntax : ExpressionSyntax
     {
         public ExpressionSyntax Left { get; }
         public SyntaxToken OperatorToken { get; }

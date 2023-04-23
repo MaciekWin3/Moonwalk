@@ -1,10 +1,12 @@
 ﻿// Repl
 
 using Compiler.CodeAnalysis;
+using Compiler.CodeAnalysis.Binding;
+using Compiler.CodeAnalysis.Syntax;
 
+bool showTree = false;
 while (true)
 {
-    bool showTree = false;
     Console.Write("> ");
     var line = Console.ReadLine();
     if (string.IsNullOrWhiteSpace(line) || line == "exit()")
@@ -26,19 +28,21 @@ while (true)
     }
 
     var syntaxTree = SyntaxTree.Parse(line);
+    var binder = new Binder();
+    var boundExpression = binder.BindExpression(syntaxTree.Root);
 
-    var color = Console.ForegroundColor;
+    var diagnostics = syntaxTree.Diagnostics.Concat(binder.Diagnostics).ToArray();
 
     if (showTree)
     {
         Console.ForegroundColor = ConsoleColor.DarkGray;
         PrettyPrint(syntaxTree.Root);
-        Console.ForegroundColor = color;
+        Console.ResetColor();
     }
 
-    if (!syntaxTree.Diagnostics.Any())
+    if (!diagnostics.Any())
     {
-        var e = new Evaluator(syntaxTree.Root);
+        var e = new Evaluator(boundExpression);
         var result = e.Evaluate();
         Console.WriteLine(result);
     }
@@ -49,7 +53,7 @@ while (true)
         {
             Console.WriteLine(diagnostic);
         }
-        Console.ForegroundColor = color;
+        Console.ResetColor();
     }
 }
 
@@ -67,7 +71,7 @@ static void PrettyPrint(SyntaxNode node, string indent = "", bool isLast = true)
     }
 
     Console.WriteLine();
-    indent += isLast ? "    " : "│   ";
+    indent += isLast ? "   " : "│  ";
 
 
     var lastChild = node.GetChildren().LastOrDefault();
