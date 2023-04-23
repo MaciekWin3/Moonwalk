@@ -1,6 +1,6 @@
 ﻿namespace Compiler.CodeAnalysis
 {
-    public class Diagnostic
+    public sealed class Diagnostic
     {
         public TextSpan Span { get; }
         public string Message { get; }
@@ -10,4 +10,7 @@
             Span = span;
             Message = message;
         }
+
+        public override string ToString() => Message;
     }
+}

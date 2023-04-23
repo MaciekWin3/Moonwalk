@@ -6,8 +6,8 @@ namespace Compiler.CodeAnalysis.Syntax
     {
         private readonly SyntaxToken[] tokens;
         private int position;
-        private List<string> diagnostics = new();
-        public IEnumerable<string> Diagnostics => diagnostics;
+        private DiagnosticBag diagnostics = new();
+        public DiagnosticBag Diagnostics => diagnostics;
         public Parser(string text)
         {
             var tokens = new List<SyntaxToken>();
@@ -53,7 +53,7 @@ namespace Compiler.CodeAnalysis.Syntax
                 return NextToken();
             }
 
-            diagnostics.Add($"Error: Unexpected token<{Current.Kind}>, expected <{kind}>");
+            diagnostics.ReportUnexpectedToken(Current.Span, Current.Kind, kind);
             return new SyntaxToken(kind, Current.Position, null!, null!);
         }
 
