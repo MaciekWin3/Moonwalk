@@ -11,10 +11,13 @@
         MinusToken,
         StarToken,
         SlashToken,
+        EqualsToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
         IndentifierToken,
         BangToken,
+        EqualsEqualsToken,
+        BangEqualsToken,
         AmpersandAmpersandToken,
         PipePipeToken,
 
@@ -24,10 +27,10 @@
 
         // Expressions
         LiteralExpression,
+        NameExpression,
         BinaryExpression,
         ParenthesizedExpression,
         UnaryExpression,
-        EqualsEqualsToken,
-        BangEqualsToken,
+        AssignmentExpression,
     }
 }

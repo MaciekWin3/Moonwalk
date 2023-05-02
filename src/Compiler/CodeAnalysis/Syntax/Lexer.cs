@@ -115,7 +115,11 @@
                         position += 2;
                         return new SyntaxToken(SyntaxKind.EqualsEqualsToken, start, "==", null!);
                     }
-                    break;
+                    else
+                    {
+                        position += 1;
+                        return new SyntaxToken(SyntaxKind.EqualsToken, start, "=", null!);
+                    }
                 case '!':
                     if (Lookahead == '=')
                     {
@@ -124,7 +128,8 @@
                     }
                     else
                     {
-                        return new SyntaxToken(SyntaxKind.BangToken, position++, "!", null!);
+                        position += 1;
+                        return new SyntaxToken(SyntaxKind.BangToken, start, "!", null!);
                     }
             }
 
