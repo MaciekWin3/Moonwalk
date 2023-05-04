@@ -52,5 +52,11 @@ namespace Compiler.CodeAnalysis
             var message = $"Binary operator '{operatorText}' is not defined for types {leftType} and {rightType}.";
             Report(span, message);
         }
+
+        internal void ReportUndefinedName(TextSpan span, string name)
+        {
+            var message = $"Varaible '{name}' doesn't exist.";
+            Report(span, message);
+        }
     }
 }

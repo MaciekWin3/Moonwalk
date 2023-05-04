@@ -72,10 +72,8 @@ namespace Compiler.CodeAnalysis.Syntax
 
         private ExpressionSyntax ParseAssignmentExpression()
         {
-            // 1:02:44
-
             if (Peek(0).Kind == SyntaxKind.IndentifierToken
-                && Peek(1).Kind == SyntaxKind.EqualsEqualsToken)
+                && Peek(1).Kind == SyntaxKind.EqualsToken)
             {
                 var identifierToken = NextToken();
                 var operatorToken = NextToken();

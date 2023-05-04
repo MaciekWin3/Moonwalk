@@ -5,8 +5,13 @@ namespace Compiler.CodeAnalysis.Binding
 {
     internal sealed class Binder
     {
+        private readonly Dictionary<VariableSymbol, object> variables = new();
         private readonly DiagnosticBag diagnostics = new();
         public DiagnosticBag Diagnostics => diagnostics;
+        public Binder(Dictionary<VariableSymbol, object> variables)
+        {
+            this.variables = variables;
+        }
 
         public BoundExpression BindExpression(ExpressionSyntax syntax) =>
             syntax.Kind switch
@@ -14,7 +19,7 @@ namespace Compiler.CodeAnalysis.Binding
                 SyntaxKind.ParenthesizedExpression => BindParenthesizedExpression(((ParenthesizedExpressionSyntax)syntax)),
                 SyntaxKind.LiteralExpression => BindLiteralExpression((LiteralExpressionSyntax)syntax),
                 SyntaxKind.NameExpression => BindNameExpression((NameExpressionSyntax)syntax),
-                SyntaxKind.AssignmentExpression => BindAssignmentExpression((NameExpressionSyntax)syntax),
+                SyntaxKind.AssignmentExpression => BindAssignmentExpression((AssignmentExpressionSyntax)syntax),
                 SyntaxKind.UnaryExpression => BindUnaryExpression((UnaryExpressionSyntax)syntax),
                 SyntaxKind.BinaryExpression => BindBinaryExpression((BinaryExpressionSyntax)syntax),
                 _ => throw new Exception($"Unexpected syntax {syntax.Kind}")
@@ -31,16 +36,33 @@ namespace Compiler.CodeAnalysis.Binding
             return new BoundLiteralExpression(value);
         }
 
-        private BoundExpression BindAssignmentExpression(NameExpressionSyntax syntax)
-        {
-            throw new NotImplementedException();
-        }
-
         private BoundExpression BindNameExpression(NameExpressionSyntax syntax)
         {
-            throw new NotImplementedException();
+            var name = syntax.IdentifierToken.Text;
+            var variable = variables.Keys.FirstOrDefault(v => v.Name == name);
+
+            if (variable is null)
+            {
+                diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
+                return new BoundLiteralExpression(0);
+            }
+            return new BoundVariableExpression(variable);
         }
 
+        private BoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)
+        {
+            var name = syntax.IdentifierToken.Text;
+            var boundExpression = BindExpression(syntax.Expression);
+            var existingVariable = variables.Keys.FirstOrDefault(v => v.Name == name);
+            if (existingVariable is not null)
+            {
+                variables.Remove(existingVariable);
+            }
+            var variable = new VariableSymbol(name, boundExpression.Type);
+            variables[variable] = null!;
+
+            return new BoundAssignmentExpression(variable, boundExpression);
+        }
 
         private BoundExpression BindUnaryExpression(UnaryExpressionSyntax syntax)
         {
