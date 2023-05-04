@@ -4,8 +4,8 @@
     {
         private readonly string text;
         private int position;
-        private List<string> diagnostics = new();
-        public IEnumerable<string> Diagnostics => diagnostics;
+        private DiagnosticBag diagnostics = new DiagnosticBag();
+        public DiagnosticBag Diagnostics => diagnostics;
 
         public Lexer(string text)
         {
@@ -40,9 +40,10 @@
                 return new SyntaxToken(SyntaxKind.EndOfFileToken, position, "\0", null!);
             }
 
+            int start = position;
+
             if (char.IsDigit(Current))
             {
-                int start = position;
                 while (char.IsDigit(Current))
                 {
                     Next();
@@ -51,7 +52,7 @@
                 string tokenText = text.Substring(start, length);
                 if (!int.TryParse(tokenText, out int value))
                 {
-                    diagnostics.Add($"Error: the number {text} isn't valid Int32.");
+                    diagnostics.ReportInvalidNumber(new TextSpan(start, length), text, typeof(int));
                 }
 
                 return new SyntaxToken(SyntaxKind.NumberToken, start, tokenText, value);
@@ -59,7 +60,6 @@
 
             if (char.IsWhiteSpace(Current))
             {
-                int start = position;
                 while (char.IsWhiteSpace(Current))
                 {
                     Next();
@@ -71,7 +71,6 @@
 
             if (char.IsLetter(Current))
             {
-                var start = position;
                 while (char.IsLetter(Current))
                 {
                     Next();
@@ -99,33 +98,42 @@
                 case '&':
                     if (Lookahead == '&')
                     {
-                        return new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, position += 2, "&&", null!);
+                        position += 2;
+                        return new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, start, "&&", null!);
                     }
                     break;
                 case '|':
                     if (Lookahead == '|')
                     {
-                        return new SyntaxToken(SyntaxKind.PipePipeToken, position += 2, "||", null!);
+                        position += 2;
+                        return new SyntaxToken(SyntaxKind.PipePipeToken, start, "||", null!);
                     }
                     break;
                 case '=':
                     if (Lookahead == '=')
                     {
-                        return new SyntaxToken(SyntaxKind.EqualsEqualsToken, position += 2, "==", null!);
-                    }
-                    break;
-                case '!':
-                    if (Lookahead == '=')
-                    {
-                        return new SyntaxToken(SyntaxKind.BangEqualsToken, position += 2, "!=", null!);
+                        position += 2;
+                        return new SyntaxToken(SyntaxKind.EqualsEqualsToken, start, "==", null!);
                     }
                     else
                     {
-                        return new SyntaxToken(SyntaxKind.BangToken, position++, "!", null!);
+                        position += 1;
+                        return new SyntaxToken(SyntaxKind.EqualsToken, start, "=", null!);
+                    }
+                case '!':
+                    if (Lookahead == '=')
+                    {
+                        position += 2;
+                        return new SyntaxToken(SyntaxKind.BangEqualsToken, start, "!=", null!);
+                    }
+                    else
+                    {
+                        position += 1;
+                        return new SyntaxToken(SyntaxKind.BangToken, start, "!", null!);
                     }
             }
 
-            diagnostics.Add($"Error: bad character in input: '{Current}'");
+            diagnostics.ReportBadNumber(position, Current);
             return new SyntaxToken(SyntaxKind.InvalidToken, position++, text.Substring(position - 1, 1), null!);
         }
     }

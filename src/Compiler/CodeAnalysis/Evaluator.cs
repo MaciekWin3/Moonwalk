@@ -1,14 +1,17 @@
 ﻿using Compiler.CodeAnalysis.Binding;
+using Compiler.CodeAnalysis.Syntax;
 
 namespace Compiler.CodeAnalysis
 {
     internal sealed class Evaluator
     {
-        public BoundExpression Root { get; }
+        private readonly BoundExpression Root;
+        private readonly Dictionary<VariableSymbol, object> variables = new();
 
-        public Evaluator(BoundExpression root)
+        public Evaluator(BoundExpression root, Dictionary<VariableSymbol, object> variables)
         {
             Root = root;
+            this.variables = variables;
         }
 
         public object Evaluate()
@@ -21,6 +24,18 @@ namespace Compiler.CodeAnalysis
             if (node is BoundLiteralExpression n)
             {
                 return n.Value;
+            }
+
+            if (node is BoundVariableExpression v)
+            {
+                return variables[v.Variable];
+            }
+
+            if (node is BoundAssignmentExpression a)
+            {
+                var value = EvaluateExpression(a.Expression);
+                variables[a.Variable] = value;
+                return value;
             }
 
             if (node is BoundUnaryExpression u)
