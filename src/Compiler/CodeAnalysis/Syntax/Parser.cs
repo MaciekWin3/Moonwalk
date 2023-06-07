@@ -72,7 +72,7 @@ namespace Compiler.CodeAnalysis.Syntax
 
         private ExpressionSyntax ParseAssignmentExpression()
         {
-            if (Peek(0).Kind == SyntaxKind.IndentifierToken
+            if (Peek(0).Kind == SyntaxKind.IdentifierToken
                 && Peek(1).Kind == SyntaxKind.EqualsToken)
             {
                 var identifierToken = NextToken();
@@ -131,7 +131,7 @@ namespace Compiler.CodeAnalysis.Syntax
                         var value = keywordToken.Kind == SyntaxKind.TrueKeyword;
                         return new LiteralExpressionSyntax(keywordToken, value);
                     }
-                case SyntaxKind.IndentifierToken:
+                case SyntaxKind.IdentifierToken:
                     {
                         var identifierToken = NextToken();
                         return new NameExpressionSyntax(identifierToken);

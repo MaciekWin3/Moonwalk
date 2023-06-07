@@ -11,7 +11,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2141AD30
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compiler", "src\Compiler\Compiler.csproj", "{1C5BB0EE-55E6-4809-85F5-1021760E8473}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Compiler.Tests", "tests\Compiler.Tests\Compiler.Tests.csproj", "{224CF082-9EB3-46A5-93F5-BB90F5AAACD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compiler.Tests", "tests\Compiler.Tests\Compiler.Tests.csproj", "{224CF082-9EB3-46A5-93F5-BB90F5AAACD5}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6DD76565-C2E7-4B7E-97E3-B04D54EAAA3D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

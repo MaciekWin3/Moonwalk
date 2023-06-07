@@ -14,7 +14,7 @@
         EqualsToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
-        IndentifierToken,
+        IdentifierToken,
         BangToken,
         EqualsEqualsToken,
         BangEqualsToken,
