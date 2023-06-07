@@ -10,7 +10,6 @@
             Span = span;
             Message = message;
         }
-
         public override string ToString() => Message;
     }
 }

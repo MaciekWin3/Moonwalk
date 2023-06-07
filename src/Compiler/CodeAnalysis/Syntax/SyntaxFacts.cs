@@ -34,7 +34,7 @@
             {
                 "true" => SyntaxKind.TrueKeyword,
                 "false" => SyntaxKind.FalseKeyword,
-                _ => SyntaxKind.IndentifierToken
+                _ => SyntaxKind.IdentifierToken
             };
     }
 }
