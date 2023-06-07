@@ -8,7 +8,9 @@ var variables = new Dictionary<VariableSymbol, object>();
 
 while (true)
 {
-    Console.Write("> ");
+    Console.ForegroundColor = ConsoleColor.Blue;
+    Console.Write("MoonWalk> ");
+    Console.ResetColor();
     var line = Console.ReadLine();
     if (string.IsNullOrWhiteSpace(line) || line == "exit()")
     {
