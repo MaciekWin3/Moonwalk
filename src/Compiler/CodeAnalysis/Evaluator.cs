@@ -44,8 +44,8 @@ namespace Compiler.CodeAnalysis
 
                 return u.Op.Kind switch
                 {
-                    BoundUnaryOperatorKind.Negation => (int)operand,
-                    BoundUnaryOperatorKind.Identity => -(int)operand,
+                    BoundUnaryOperatorKind.Identity => (int)operand,
+                    BoundUnaryOperatorKind.Negation => -(int)operand,
                     BoundUnaryOperatorKind.LogicalNegation => !(bool)operand,
                     _ => throw new Exception($"Error: Unexpected unary operator {u.Op}")
                 };
