@@ -8,7 +8,6 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
     public class LexerTests
     {
         [Test]
-        [Theory]
         [TestCaseSource(nameof(GetTokensData))]
         public void LexerLexesToken(SyntaxKind kind, string text)
         {
@@ -22,7 +21,6 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
         }
 
         [Test]
-        [Theory]
         [TestCaseSource(nameof(GetTokenPairsData))]
         public void LexerLexesTokenPairs(SyntaxKind t1Kind, string t1Text, SyntaxKind t2Kind, string t2Text)
         {
@@ -44,7 +42,6 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
         }
 
         [Test]
-        [Theory]
         [TestCaseSource(nameof(GetTokenPairsWithSeparatorData))]
         public void LexerLexesTokenPairsWithSeparators(SyntaxKind t1Kind, string t1Text,
                                          SyntaxKind separatorKind, string separatorText,

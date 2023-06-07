@@ -8,7 +8,6 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
     public class SyntaxFactsTests
     {
         [Test]
-        [Theory]
         [TestCaseSource(nameof(GetSyntaxKindData))]
         public void SyntaxFactGetTextRoundTrips(SyntaxKind kind)
         {
