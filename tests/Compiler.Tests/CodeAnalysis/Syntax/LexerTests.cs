@@ -29,7 +29,6 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
 
             // Act 
             var tokens = SyntaxTree.ParseTokens(text).ToArray();
-            var token = tokens.First();
 
             // Assert
             tokens.Length.Should().Be(2);
