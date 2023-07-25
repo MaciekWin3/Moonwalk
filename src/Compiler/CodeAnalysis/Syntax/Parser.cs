@@ -1,10 +1,11 @@
 ﻿using Compiler.CodeAnalysis.Syntax.Expressions;
+using System.Collections.Immutable;
 
 namespace Compiler.CodeAnalysis.Syntax
 {
     internal sealed class Parser
     {
-        private readonly SyntaxToken[] tokens;
+        private readonly ImmutableArray<SyntaxToken> tokens;
         private int position;
         private readonly DiagnosticBag diagnostics = new();
         public DiagnosticBag Diagnostics => diagnostics;
@@ -22,7 +23,7 @@ namespace Compiler.CodeAnalysis.Syntax
                 }
             } while (token.Kind != SyntaxKind.EndOfFileToken);
 
-            this.tokens = tokens.ToArray();
+            this.tokens = tokens.ToImmutableArray();
             diagnostics.AddRange(lexer.Diagnostics);
         }
 
@@ -31,7 +32,7 @@ namespace Compiler.CodeAnalysis.Syntax
             int index = position + offset;
             if (index >= tokens.Length)
             {
-                return tokens[tokens.Length - 1];
+                return tokens[^1];
             }
 
             return tokens[index];
@@ -61,13 +62,12 @@ namespace Compiler.CodeAnalysis.Syntax
         {
             var expresion = ParseExpression();
             var enfOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
-            return new SyntaxTree(diagnostics, expresion, enfOfFileToken);
+            return new SyntaxTree(diagnostics.ToImmutableArray(), expresion, enfOfFileToken);
         }
 
         private ExpressionSyntax ParseExpression()
         {
             return ParseAssignmentExpression();
-
         }
 
         private ExpressionSyntax ParseAssignmentExpression()
