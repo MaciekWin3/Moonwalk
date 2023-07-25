@@ -10,5 +10,10 @@
             Length = length;
         }
         public int End => Start + Length;
+
+        internal static TextSpan FromBounds(int start, int end)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
