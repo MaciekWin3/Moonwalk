@@ -10,10 +10,5 @@
         {
             IdentifierToken = identifierToken;
         }
-
-        public override IEnumerable<SyntaxNode> GetChildren()
-        {
-            yield return IdentifierToken;
-        }
     }
 }
