@@ -1,4 +1,6 @@
-﻿namespace Compiler.CodeAnalysis.Syntax
+﻿using Compiler.CodeAnalysis.Text;
+
+namespace Compiler.CodeAnalysis.Syntax
 {
     // 1:15:10
     public sealed class SyntaxToken : SyntaxNode

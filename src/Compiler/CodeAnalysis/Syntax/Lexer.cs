@@ -1,4 +1,6 @@
-﻿namespace Compiler.CodeAnalysis.Syntax
+﻿using Compiler.CodeAnalysis.Text;
+
+namespace Compiler.CodeAnalysis.Syntax
 {
     internal class Lexer
     {

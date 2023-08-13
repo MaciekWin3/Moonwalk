@@ -1,4 +1,5 @@
-﻿using System.Reflection;
+﻿using Compiler.CodeAnalysis.Text;
+using System.Reflection;
 
 namespace Compiler.CodeAnalysis.Syntax
 {
