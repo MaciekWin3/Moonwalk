@@ -13,7 +13,8 @@
 
         internal static TextSpan FromBounds(int start, int end)
         {
-            throw new NotImplementedException();
+            var length = end - start;
+            return new TextSpan(start, length);
         }
     }
 }
