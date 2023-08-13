@@ -9,7 +9,7 @@
             Start = start;
             Length = length;
         }
-        public int End => Start + Length;
+        public readonly int End => Start + Length;
 
         internal static TextSpan FromBounds(int start, int end)
         {

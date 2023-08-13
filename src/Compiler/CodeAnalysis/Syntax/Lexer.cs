@@ -4,15 +4,15 @@ namespace Compiler.CodeAnalysis.Syntax
 {
     internal class Lexer
     {
-        private readonly string text;
-        private readonly DiagnosticBag diagnostics = new DiagnosticBag();
+        private readonly SourceText text;
+        private readonly DiagnosticBag diagnostics = new();
         private int position;
         private int start;
         private SyntaxKind kind;
         private object? value;
         public DiagnosticBag Diagnostics => diagnostics;
 
-        public Lexer(string text)
+        public Lexer(SourceText text)
         {
             this.text = text;
         }
@@ -149,7 +149,7 @@ namespace Compiler.CodeAnalysis.Syntax
 
             var length = position - start;
             var text = SyntaxFacts.GetText(kind);
-            text ??= this.text.Substring(start, length);
+            text ??= this.text.ToString(start, length);
 
             return new SyntaxToken(kind, start, text, value);
 
@@ -162,10 +162,10 @@ namespace Compiler.CodeAnalysis.Syntax
                 Next();
             }
             int length = position - start;
-            string tokenText = text.Substring(start, length);
+            string tokenText = text.ToString(start, length);
             if (!int.TryParse(tokenText, out int value))
             {
-                diagnostics.ReportInvalidNumber(new TextSpan(start, length), text, typeof(int));
+                diagnostics.ReportInvalidNumber(new TextSpan(start, length), tokenText, typeof(int));
             }
 
             this.value = value;
@@ -188,9 +188,8 @@ namespace Compiler.CodeAnalysis.Syntax
                 Next();
             }
             int length = position - start;
-            string tokenText = text.Substring(start, length);
+            string tokenText = text.ToString(start, length);
             kind = SyntaxFacts.GetKeywordKind(tokenText);
         }
     }
 }
-// 37:00
