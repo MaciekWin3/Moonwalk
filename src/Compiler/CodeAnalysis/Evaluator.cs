@@ -19,46 +19,51 @@ namespace Compiler.CodeAnalysis
             return EvaluateExpression(Root);
         }
 
-        private object EvaluateExpression(BoundExpression node)
+        private object EvaluateExpression(BoundExpression node) => node.Kind switch
         {
-            if (node is BoundLiteralExpression n)
+            BoundNodeKind.LiteralExpression => EvaluateLiteralExpression((BoundLiteralExpression)node),
+            BoundNodeKind.VariableExpression => EvaluateVariableExpression((BoundVariableExpression)node),
+            BoundNodeKind.AssignmentExpression => EvaluateAssignmentExpression((BoundAssignmentExpression)node),
+            BoundNodeKind.UnaryExpression => EvaluateUnaryExpression((BoundUnaryExpression)node),
+            BoundNodeKind.BinaryExpression => EvaluateBinaryExpression((BoundBinaryExpression)node),
+            _ => throw new Exception($"Error: Unexpected node {node.Kind}")
+        };
+
+        private static object EvaluateLiteralExpression(BoundLiteralExpression n)
+        {
+            return n.Value;
+        }
+
+        private object EvaluateVariableExpression(BoundVariableExpression v)
+        {
+            return variables[v.Variable];
+        }
+
+        private object EvaluateAssignmentExpression(BoundAssignmentExpression a)
+        {
+            var value = EvaluateExpression(a.Expression);
+            variables[a.Variable] = value;
+            return value;
+        }
+
+        private object EvaluateUnaryExpression(BoundUnaryExpression u)
+        {
+            var operand = EvaluateExpression(u.Operand);
+
+            return u.Op.Kind switch
             {
-                return n.Value;
-            }
+                BoundUnaryOperatorKind.Identity => (int)operand,
+                BoundUnaryOperatorKind.Negation => -(int)operand,
+                BoundUnaryOperatorKind.LogicalNegation => !(bool)operand,
+                _ => throw new Exception($"Error: Unexpected unary operator {u.Op}")
+            };
+        }
 
-            if (node is BoundVariableExpression v)
-            {
-                return variables[v.Variable];
-            }
-
-            if (node is BoundAssignmentExpression a)
-            {
-                var value = EvaluateExpression(a.Expression);
-                variables[a.Variable] = value;
-                return value;
-            }
-
-            if (node is BoundUnaryExpression u)
-            {
-                var operand = EvaluateExpression(u.Operand);
-
-                return u.Op.Kind switch
-                {
-                    BoundUnaryOperatorKind.Identity => (int)operand,
-                    BoundUnaryOperatorKind.Negation => -(int)operand,
-                    BoundUnaryOperatorKind.LogicalNegation => !(bool)operand,
-                    _ => throw new Exception($"Error: Unexpected unary operator {u.Op}")
-                };
-            }
-
-            if (node is BoundBinaryExpression b)
-            {
-                var left = EvaluateExpression(b.Left);
-                var right = EvaluateExpression(b.Right);
-                return CalculateExpression(b.Op.Kind, left, right);
-            }
-
-            throw new Exception($"Error: Unexpected node {node.Kind}");
+        private object EvaluateBinaryExpression(BoundBinaryExpression b)
+        {
+            var left = EvaluateExpression(b.Left);
+            var right = EvaluateExpression(b.Right);
+            return CalculateExpression(b.Op.Kind, left, right);
         }
 
         private static object CalculateExpression(BoundBinaryOperatorKind syntaxKind, object left, object right) =>

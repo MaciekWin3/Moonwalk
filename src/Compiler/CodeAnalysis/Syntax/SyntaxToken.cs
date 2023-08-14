@@ -1,23 +1,21 @@
-﻿namespace Compiler.CodeAnalysis.Syntax
+﻿using Compiler.CodeAnalysis.Text;
+
+namespace Compiler.CodeAnalysis.Syntax
 {
+    // 1:15:10
     public sealed class SyntaxToken : SyntaxNode
     {
         public override SyntaxKind Kind { get; }
         public int Position { get; }
         public string Text { get; }
         public object Value { get; }
-        public TextSpan Span => new TextSpan(Position, Text.Length);
+        public override TextSpan Span => new(Position, Text?.Length ?? 0);
         public SyntaxToken(SyntaxKind kind, int position, string text, object value)
         {
             Kind = kind;
             Position = position;
             Text = text;
             Value = value;
-        }
-
-        public override IEnumerable<SyntaxNode> GetChildren()
-        {
-            return Enumerable.Empty<SyntaxNode>();
         }
     }
 }
