@@ -2,35 +2,61 @@
 
 using Compiler.CodeAnalysis;
 using Compiler.CodeAnalysis.Syntax;
+using Compiler.CodeAnalysis.Text;
+using System.Text;
 
 bool showTree = false;
 var variables = new Dictionary<VariableSymbol, object>();
+var textBuilder = new StringBuilder();
+
 
 while (true)
 {
-    Console.ForegroundColor = ConsoleColor.Blue;
-    Console.Write("MoonWalk> ");
-    Console.ResetColor();
-    var line = Console.ReadLine();
-    if (string.IsNullOrWhiteSpace(line) || line == "exit()")
+    if (textBuilder.Length == 0)
     {
-        return;
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write("MoonWalk> ");
+        Console.ResetColor();
+        Console.Write(textBuilder.ToString());
+    }
+    else
+    {
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write("MoonWalk| ");
+        Console.ResetColor();
+    }
+    var input = Console.ReadLine();
+    var isBlank = string.IsNullOrWhiteSpace(input);
+
+    if (textBuilder.Length == 0)
+    {
+        if (isBlank)
+        {
+            break;
+        }
+        else if (input == "showTree()")
+        {
+            showTree = !showTree;
+            Console.WriteLine(showTree ? "Showing parse trees." : "Not showing parse trees");
+            continue;
+        }
+        else if (input == "cls()")
+        {
+            Console.Clear();
+            continue;
+        }
     }
 
-    if (line == "showTree()")
+    textBuilder.AppendLine(input);
+    var text = textBuilder.ToString();
+
+    var syntaxTree = SyntaxTree.Parse(text);
+
+    if (!isBlank && syntaxTree.Diagnostics.Any())
     {
-        showTree = !showTree;
-        Console.WriteLine(showTree ? "Showing parse trees." : "Not showing parse trees");
         continue;
     }
 
-    if (line == "cls()")
-    {
-        Console.Clear();
-        continue;
-    }
-
-    var syntaxTree = SyntaxTree.Parse(line);
     var compilation = new Compilation(syntaxTree);
     var result = compilation.Evaluate(variables);
 
@@ -49,14 +75,12 @@ while (true)
     }
     else
     {
-
-        var text = syntaxTree.Text;
-
         foreach (var diagnostic in diagnostics)
         {
-            var lineIndex = text.GetLineIndex(diagnostic.Span.Start);
+            var lineIndex = syntaxTree.Text.GetLineIndex(diagnostic.Span.Start);
             var lineNumber = lineIndex + 1;
-            var character = diagnostic.Span.Start - text.Lines[lineIndex].Start + 1;
+            var line = syntaxTree.Text.Lines[lineIndex];
+            var character = diagnostic.Span.Start - line.Start + 1;
 
             Console.WriteLine();
             Console.ForegroundColor = ConsoleColor.DarkRed;
@@ -64,9 +88,12 @@ while (true)
             Console.WriteLine(diagnostic);
             Console.ResetColor();
 
-            var prefix = line.Substring(0, diagnostic.Span.Start);
-            var error = line.Substring(diagnostic.Span.Start, diagnostic.Span.Length);
-            var suffix = line.Substring(diagnostic.Span.End);
+            var prefixSpan = TextSpan.FromBounds(line.Start, diagnostic.Span.Start);
+            var suffixSpan = TextSpan.FromBounds(diagnostic.Span.End, line.End);
+
+            var prefix = syntaxTree.Text.ToString(prefixSpan);
+            var error = syntaxTree.Text.ToString(diagnostic.Span);
+            var suffix = syntaxTree.Text.ToString(suffixSpan);
 
             Console.Write("    ");
             Console.Write(prefix);
@@ -81,6 +108,7 @@ while (true)
         }
         Console.WriteLine();
     }
+    textBuilder.Clear();
 }
 
 
