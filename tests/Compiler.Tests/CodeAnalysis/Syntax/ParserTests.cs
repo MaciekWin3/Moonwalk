@@ -72,7 +72,7 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
             var unaryText = SyntaxFacts.GetText(unaryKind);
             var binaryText = SyntaxFacts.GetText(binaryKind);
             var text = $"{unaryText} a {binaryText} b";
-            var expression = SyntaxTree.Parse(text).Root;
+            var expression = ParseExpression(text);
 
             if (unaryPrecedence >= binaryPrecedence)
             {
@@ -116,7 +116,13 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
             }
         }
 
-
+        //private static ExpressionSyntax ParseExpression(string text)
+        //{
+        //    var syntaxTree = SyntaxTree.Parse(text);
+        //    var root = syntaxTree.Root;
+        //    var statement = root.Statement;
+        //    return Assert.IsType<ExpressionStatementSyntax>(statement).Expression;
+        //}
 
         private static IEnumerable<object[]> GetBinaryOperatorPairsData()
         {
