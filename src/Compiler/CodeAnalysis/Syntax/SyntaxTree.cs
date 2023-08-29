@@ -1,5 +1,5 @@
-﻿using Compiler.CodeAnalysis.Syntax.Expressions;
-using Compiler.CodeAnalysis.Text;
+﻿using Compiler.CodeAnalysis.Text;
+using Compiler.Tests.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
 namespace Compiler.CodeAnalysis.Syntax
@@ -8,14 +8,16 @@ namespace Compiler.CodeAnalysis.Syntax
     {
         public SourceText Text { get; }
         public ImmutableArray<Diagnostic> Diagnostics { get; }
-        public ExpressionSyntax Root { get; }
-        public SyntaxToken EndOfFileToken { get; }
-        public SyntaxTree(SourceText text, ImmutableArray<Diagnostic> diagnostics, ExpressionSyntax root, SyntaxToken endOfFileToken)
+        public CompilationUnitSyntax Root { get; }
+        private SyntaxTree(SourceText text)
         {
+            var parser = new Parser(text);
+            var root = parser.ParseCompilationUnit();
+            var diagnostics = parser.Diagnostics.ToImmutableArray();
+
             Text = text;
             Diagnostics = diagnostics;
             Root = root;
-            EndOfFileToken = endOfFileToken;
         }
 
         public static SyntaxTree Parse(string text)
@@ -26,8 +28,7 @@ namespace Compiler.CodeAnalysis.Syntax
 
         public static SyntaxTree Parse(SourceText text)
         {
-            var parser = new Parser(text);
-            return parser.Parse();
+            return new SyntaxTree(text);
         }
 
         public static IEnumerable<SyntaxToken> ParseTokens(string text)

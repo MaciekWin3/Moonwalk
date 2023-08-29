@@ -34,7 +34,7 @@ while (true)
         {
             break;
         }
-        else if (input == "showTree()")
+        else if (input == "#showTree")
         {
             showTree = !showTree;
             Console.WriteLine(showTree ? "Showing parse trees." : "Not showing parse trees");

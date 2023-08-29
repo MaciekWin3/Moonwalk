@@ -1,5 +1,6 @@
 ﻿using Compiler.CodeAnalysis.Syntax.Expressions;
 using Compiler.CodeAnalysis.Text;
+using Compiler.Tests.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
 namespace Compiler.CodeAnalysis.Syntax
@@ -63,11 +64,11 @@ namespace Compiler.CodeAnalysis.Syntax
             return new SyntaxToken(kind, Current.Position, null!, null!);
         }
 
-        public SyntaxTree Parse()
+        public CompilationUnitSyntax ParseCompilationUnit()
         {
-            var expresion = ParseExpression();
-            var enfOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
-            return new SyntaxTree(Text, diagnostics.ToImmutableArray(), expresion, enfOfFileToken);
+            var expression = ParseExpression();
+            var endOfFileToken = MatchToken(SyntaxKind.EndOfFileToken);
+            return new CompilationUnitSyntax(expression, endOfFileToken);
         }
 
         private ExpressionSyntax ParseExpression()
