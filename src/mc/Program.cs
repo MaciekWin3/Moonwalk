@@ -8,7 +8,7 @@ using System.Text;
 bool showTree = false;
 var variables = new Dictionary<VariableSymbol, object>();
 var textBuilder = new StringBuilder();
-
+Compilation previous = null!;
 
 while (true)
 {
@@ -34,7 +34,7 @@ while (true)
         {
             break;
         }
-        else if (input == "showTree()")
+        else if (input == "#showTree")
         {
             showTree = !showTree;
             Console.WriteLine(showTree ? "Showing parse trees." : "Not showing parse trees");
@@ -43,6 +43,12 @@ while (true)
         else if (input == "cls()")
         {
             Console.Clear();
+            continue;
+        }
+        else if (input == "#reset")
+        {
+            previous = null!;
+            variables.Clear();
             continue;
         }
     }
@@ -57,7 +63,7 @@ while (true)
         continue;
     }
 
-    var compilation = new Compilation(syntaxTree);
+    var compilation = previous is null ? new Compilation(syntaxTree) : previous.ContinueWith(syntaxTree);
     var result = compilation.Evaluate(variables);
 
     var diagnostics = result.Diagnostics;
@@ -72,6 +78,7 @@ while (true)
     if (!diagnostics.Any())
     {
         Console.WriteLine(result.Value);
+        previous = compilation;
     }
     else
     {

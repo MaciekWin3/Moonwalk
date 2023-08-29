@@ -1,14 +1,13 @@
 ﻿using Compiler.CodeAnalysis.Binding;
-using Compiler.CodeAnalysis.Syntax;
 
 namespace Compiler.CodeAnalysis
 {
     internal sealed class Evaluator
     {
-        private readonly BoundExpression Root;
+        private readonly BoundStatement Root;
         private readonly Dictionary<VariableSymbol, object> variables = new();
-
-        public Evaluator(BoundExpression root, Dictionary<VariableSymbol, object> variables)
+        private object lastValue = null!;
+        public Evaluator(BoundStatement root, Dictionary<VariableSymbol, object> variables)
         {
             Root = root;
             this.variables = variables;
@@ -16,7 +15,44 @@ namespace Compiler.CodeAnalysis
 
         public object Evaluate()
         {
-            return EvaluateExpression(Root);
+            EvaluateStatement(Root);
+            return lastValue;
+        }
+
+        private void EvaluateStatement(BoundStatement node)
+        {
+            switch (node.Kind)
+            {
+                case BoundNodeKind.BlockStatement:
+                    EvaluateBlockStatement((BoundBlockStatement)node);
+                    break;
+                case BoundNodeKind.VariableDeclaration:
+                    EvaluateVariableDeclaration((BoundVariableDeclaration)node);
+                    break;
+                case BoundNodeKind.ExpressionStatement:
+                    EvaluateExpressionStatement((BoundExpressionStatement)node);
+                    break;
+                default:
+                    throw new Exception($"Unexpected node {node.Kind}");
+            }
+        }
+
+        private void EvaluateVariableDeclaration(BoundVariableDeclaration node)
+        {
+            var value = EvaluateExpression(node.Initializer);
+            variables[node.Variable] = value;
+            lastValue = value;
+        }
+
+        private void EvaluateBlockStatement(BoundBlockStatement node)
+        {
+            foreach (var statement in node.Statements)
+                EvaluateStatement(statement);
+        }
+
+        private void EvaluateExpressionStatement(BoundExpressionStatement node)
+        {
+            lastValue = EvaluateExpression(node.Expression);
         }
 
         private object EvaluateExpression(BoundExpression node) => node.Kind switch
