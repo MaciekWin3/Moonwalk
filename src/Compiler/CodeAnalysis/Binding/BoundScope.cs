@@ -1,5 +1,4 @@
-﻿using Compiler.CodeAnalysis.Syntax;
-using System.Collections.Immutable;
+﻿using System.Collections.Immutable;
 
 namespace Compiler.CodeAnalysis.Binding
 {

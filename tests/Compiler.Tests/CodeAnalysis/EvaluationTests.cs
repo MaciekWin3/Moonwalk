@@ -29,7 +29,7 @@ namespace Compiler.Tests.CodeAnalysis
         [TestCase("false", false)]
         [TestCase("!true", false)]
         [TestCase("!false", true)]
-        [TestCase("(a = 10) * a", 100)]
+        [TestCase("{ var a = 0 (a = 10) * a }", 100)]
         public void SyntaxFactGetTextRoundTrips(string text, object expectedValue)
         {
             // Arrange

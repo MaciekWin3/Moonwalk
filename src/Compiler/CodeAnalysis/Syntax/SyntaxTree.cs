@@ -4,7 +4,7 @@ using System.Collections.Immutable;
 
 namespace Compiler.CodeAnalysis.Syntax
 {
-    sealed public class SyntaxTree
+    public sealed class SyntaxTree
     {
         public SourceText Text { get; }
         public ImmutableArray<Diagnostic> Diagnostics { get; }

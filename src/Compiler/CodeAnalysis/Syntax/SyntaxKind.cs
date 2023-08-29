@@ -14,6 +14,8 @@
         EqualsToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
+        OpenBraceToken,
+        CloseBraceToken,
         IdentifierToken,
         BangToken,
         EqualsEqualsToken,
@@ -23,10 +25,17 @@
 
         // Keywords
         FalseKeyword,
+        LetKeyword,
         TrueKeyword,
+        VarKeyword,
 
         //Nodes
         CompilationUnit,
+
+        // Statements
+        BlockStatement,
+        VariableDeclaration,
+        ExpressionStatement,
 
         // Expressions
         LiteralExpression,
