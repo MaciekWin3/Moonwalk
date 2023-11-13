@@ -46,7 +46,9 @@ namespace Compiler.CodeAnalysis
         {
             var diagnostics = SyntaxTree.Diagnostics.Concat(GlobalScope.Diagnostics).ToImmutableArray();
             if (diagnostics.Any())
+            {
                 return new EvaluationResult(diagnostics, null!);
+            }
 
             var evaluator = new Evaluator(GlobalScope.Statement, variables);
             var value = evaluator.Evaluate();

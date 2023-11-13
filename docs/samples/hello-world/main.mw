@@ -1,0 +1,8 @@
+// This is what I am trying to achieve
+
+import System.Console as Console;
+
+pub func main(args: string[]): void {
+    Console.WriteLine("Hello World!");
+}
+
