@@ -172,7 +172,6 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
                     {
                         yield return (t1Kind, t1Text, t2Kind, t2Text);
                     }
-
                 }
             }
         }
