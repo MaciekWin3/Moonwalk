@@ -14,8 +14,17 @@ EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repl", "src\Repl\Repl.csproj", "{C4E2F21B-2308-48A1-904F-7FBC4DAF7400}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6DD76565-C2E7-4B7E-97E3-B04D54EAAA3D}"
+	ProjectSection(SolutionItems) = preProject
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		LICENSE.txt = LICENSE.txt
+		README.md = README.md
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".github", ".github", "{D331003D-9D17-4393-8F15-C183A61EBBB6}"
+	ProjectSection(SolutionItems) = preProject
+		dependabot.yml = dependabot.yml
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{FA3FF90D-8CD9-4B57-B051-1BE5B08DC7F7}"
 	ProjectSection(SolutionItems) = preProject
