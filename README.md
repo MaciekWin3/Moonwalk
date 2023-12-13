@@ -1,4 +1,8 @@
-# Moonwalk 🌕
+<p align="center">
+    <img src="./docs/logo.png" width=60%>
+</p>
+
+<h1 align="center">MoonWalk Compiler 🌕 </h1>
 
 My first attempt at creating my own programming language.
 
@@ -6,6 +10,11 @@ My first attempt at creating my own programming language.
 Moonwalk is designed to be a simple, safe, statically typed, compiled language fully compatible with the [.NET](https://dotnet.microsoft.com/en-us/) platform. It is designed to be a simple language that is easy to learn and use, while still being powerful enough to write complex programs in.
 
 ## Goals 🎯
+- [ ] Simple impertaive language
+- [ ] Full compatibility with .NET
+- [ ] Safe, statically typed, compiled language
+- [ ] Modular and eas y to write and create POC
+- [ ] Inline testing
 
 ## Code Examples 📝
 For now the syntax is still in flux, but here is a simple example of what I am aiming for:
