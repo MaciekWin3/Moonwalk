@@ -162,6 +162,16 @@ namespace Compiler.Tests.CodeAnalysis
         }
 
         [Test]
+        public void EvaluatorNameExpressionReportsNoErrorForInsertedToken()
+        {
+            // Arrange
+            var text = @"[]";
+
+            // Act & Assert
+            AssertDiagnostics(text, "Unexpected token <EndOfFileToken>, expected <IdentifierToken>.");
+        }
+
+        [Test]
         public void EvaluatorAssignmentExpressionReportsUndefined()
         {
             // Arrange
