@@ -46,6 +46,7 @@ namespace Compiler.Tests.CodeAnalysis
         [TestCase("{ var a = 0 if a == 0 a = 10 else a = 20 a }", 10)]
         [TestCase("{ var a = 0 if a == 1 a = 10 else a = 20 a }", 20)]
         [TestCase("{ var i = 10 var result = 0 while i > 0 { result = result + i i = i - 1} result }", 55)]
+        [TestCase("{ var result = 0 for i in 1..10 { result = result + i } result }", 55)]
         public void EvaluatorComputesCorrectValues(string text, object expectedValue)
         {
             AssertValue(text, expectedValue);
@@ -165,7 +166,7 @@ namespace Compiler.Tests.CodeAnalysis
             var text = @"
                 {
                     var result = 0
-                    for i = [false] to 10
+                    for i in [false]..10
                         result = result + i
                 }";
 
@@ -180,7 +181,7 @@ namespace Compiler.Tests.CodeAnalysis
             var text = @"
                 {
                     var result = 0
-                    for i = 1 to [true]
+                    for i in 1..[true]
                         result = result + i
                 }";
 
