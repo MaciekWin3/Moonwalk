@@ -72,64 +72,6 @@ namespace Compiler.Tests.CodeAnalysis
         }
 
         [Test]
-        public void EvaluatorNameReportsUndefined()
-        {
-            // Arrange
-            var text = @"[x] * 10";
-
-            // Act & Assert
-            AssertDiagnostics(text, "Variable 'x' doesn't exist.");
-        }
-
-        [Test]
-        public void EvaluatorAssignedReportsCannotAssign()
-        {
-            // Arrange
-            var text = @"
-                {
-                    let x = 10
-                    x [=] 100
-                }";
-
-            // Act & Assert
-            AssertDiagnostics(text, "Variable 'x' is read-only and cannot be assigned to.");
-        }
-
-        [Test]
-        public void EvaluatorAssignedReportsCannotConvert()
-        {
-            // Arrange
-            var text = @"
-                {
-                    var x = 10
-                    x = [true] 
-                }";
-
-            // Act & Assert
-            AssertDiagnostics(text, "Cannot convert type 'System.Boolean' to 'System.Int32'.");
-        }
-
-        [Test]
-        public void EvaluatorUnaryReportsUndefined()
-        {
-            // Arrange
-            var text = "[+]true";
-
-            // Act & Assert
-            AssertDiagnostics(text, "Unary operator '+' is not defined for type 'System.Boolean'.");
-        }
-
-        [Test]
-        public void EvaluatorBinaryReportsUndefined()
-        {
-            // Arrange
-            var text = "10 [+] true";
-
-            // Act & Assert
-            AssertDiagnostics(text, "Binary operator '+' is not defined for types 'System.Int32' and 'System.Boolean'.");
-        }
-
-        [Test]
         public void EvaluatorIfStatementReportsCannotConvert()
         {
             // Arrange
@@ -183,6 +125,74 @@ namespace Compiler.Tests.CodeAnalysis
                     var result = 0
                     for i in 1..[true]
                         result = result + i
+                }";
+
+            // Act & Assert
+            AssertDiagnostics(text, "Cannot convert type 'System.Boolean' to 'System.Int32'.");
+        }
+
+        [Test]
+        public void EvaluatorUnaryExpressionReportsUndefined()
+        {
+            // Arrange
+            var text = "[+]true";
+
+            // Act & Assert
+            AssertDiagnostics(text, "Unary operator '+' is not defined for type 'System.Boolean'.");
+        }
+
+        [Test]
+        public void EvaluatorBinaryExpressionReportsUndefined()
+        {
+            // Arrange
+            var text = "10 [+] true";
+
+            // Act & Assert
+            AssertDiagnostics(text, "Binary operator '+' is not defined for types 'System.Int32' and 'System.Boolean'.");
+        }
+
+        [Test]
+        public void EvaluatorNameExpressionReportsUndefined()
+        {
+            // Arrange
+            var text = @"[x] * 10";
+
+            // Act & Assert
+            AssertDiagnostics(text, "Variable 'x' doesn't exist.");
+        }
+
+        [Test]
+        public void EvaluatorAssignmentExpressionReportsUndefined()
+        {
+            // Arrange
+            var text = @"[x] = 10";
+
+            // Act & Assert
+            AssertDiagnostics(text, "Variable 'x' doesn't exist.");
+        }
+
+        [Test]
+        public void EvaluatorAssignmentExpressionReportsCannotAssign()
+        {
+            // Arrange
+            var text = @"
+                {
+                    let x = 10
+                    x [=] 100
+                }";
+
+            // Act & Assert
+            AssertDiagnostics(text, "Variable 'x' is read-only and cannot be assigned to.");
+        }
+
+        [Test]
+        public void EvaluatorAssignmentExpressionReportsCannotConvert()
+        {
+            // Arrange
+            var text = @"
+                {
+                    var x = 10
+                    x = [true] 
                 }";
 
             // Act & Assert
