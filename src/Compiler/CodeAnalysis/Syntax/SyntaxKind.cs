@@ -34,6 +34,7 @@
         VarKeyword,
         IfKeyword,
         ElseKeyword,
+        WhileKeyword,
 
         //Nodes
         CompilationUnit,
@@ -44,6 +45,7 @@
         VariableDeclaration,
         ExpressionStatement,
         IfStatement,
+        WhileStatement,
 
         // Expressions
         LiteralExpression,

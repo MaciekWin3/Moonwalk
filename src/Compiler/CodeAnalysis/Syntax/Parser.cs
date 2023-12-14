@@ -76,9 +76,12 @@ namespace Compiler.CodeAnalysis.Syntax
                 SyntaxKind.LetKeyword => ParseVariableDeclaration(),
                 SyntaxKind.VarKeyword => ParseVariableDeclaration(),
                 SyntaxKind.IfKeyword => ParseIfStatement(),
+                SyntaxKind.WhileKeyword => ParseWhileStatement(),
                 _ => ParseExpressionStatement(),
             };
         }
+
+
 
         private BlockStatementSyntax ParseBlockStatement()
         {
@@ -127,6 +130,14 @@ namespace Compiler.CodeAnalysis.Syntax
             var keyword = NextToken();
             var statement = ParseStatement();
             return new ElseClauseSyntax(keyword, statement);
+        }
+
+        private StatementSyntax ParseWhileStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.WhileKeyword);
+            var condition = ParseExpression();
+            var body = ParseStatement();
+            return new WhileStatementSyntax(keyword, condition, body);
         }
 
         private ExpressionStatementSyntax ParseExpressionStatement()

@@ -42,6 +42,8 @@
                 "var" => SyntaxKind.VarKeyword,
                 "if" => SyntaxKind.IfKeyword,
                 "else" => SyntaxKind.ElseKeyword,
+                "while" => SyntaxKind.WhileKeyword,
+
                 _ => SyntaxKind.IdentifierToken
             };
 
@@ -96,6 +98,7 @@
                 SyntaxKind.VarKeyword => "var",
                 SyntaxKind.IfKeyword => "if",
                 SyntaxKind.ElseKeyword => "else",
+                SyntaxKind.WhileKeyword => "while",
                 _ => null!,
             };
     }
