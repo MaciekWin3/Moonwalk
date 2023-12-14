@@ -20,6 +20,10 @@
         BangToken,
         EqualsEqualsToken,
         BangEqualsToken,
+        LessToken,
+        LessOrEqualsToken,
+        GreaterToken,
+        GreaterOrEqualsToken,
         AmpersandAmpersandToken,
         PipePipeToken,
 

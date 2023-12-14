@@ -21,6 +21,20 @@ namespace Compiler.Tests.CodeAnalysis
         [TestCase("3 == 3", true)]
         [TestCase("12 != 3", true)]
         [TestCase("3 != 3", false)]
+
+        [TestCase("3 < 4", true)]
+        [TestCase("6 < 4", false)]
+        [TestCase("3 <= 4", true)]
+        [TestCase("3 <= 3", true)]
+        [TestCase("5 <= 4", false)]
+
+        [TestCase("8 > 7", true)]
+        [TestCase("8 > 9", false)]
+        [TestCase("8 >= 7", true)]
+        [TestCase("8 >= 8", true)]
+        [TestCase("8 >= 9", false)]
+
+        [TestCase("5 > 4", true)]
         [TestCase("false == false", true)]
         [TestCase("true == false", false)]
         [TestCase("false != false", false)]

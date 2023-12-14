@@ -9,6 +9,10 @@
         LogicalAnd,
         LogicalOr,
         Equals,
-        NotEquals
+        NotEquals,
+        Less,
+        LessOrEquals,
+        Greater,
+        GreaterOrEquals,
     }
 }
