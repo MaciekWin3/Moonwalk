@@ -72,6 +72,23 @@ namespace Compiler.Tests.CodeAnalysis
         }
 
         [Test]
+        public void EvaluatorBlockStatementNoInfiniteLoop()
+        {
+            // Arrange
+            var text = @"
+                {
+                [)][]
+            ";
+
+            var diagnostics = @"
+                Unexpected token <CloseParenthesisToken>, expected <IdentifierToken>.
+                Unexpected token <EndOfFileToken>, expected <CloseBraceToken>.";
+
+            // Act & Assert
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Test]
         public void EvaluatorIfStatementReportsCannotConvert()
         {
             // Arrange
