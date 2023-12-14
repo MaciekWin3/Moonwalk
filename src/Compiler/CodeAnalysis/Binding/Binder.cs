@@ -69,6 +69,8 @@ namespace Compiler.CodeAnalysis.Binding
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
                 case SyntaxKind.IfStatement:
                     return BindIfStatement((IfStatementSyntax)syntax);
+                case SyntaxKind.WhileStatement:
+                    return BindWhileStatement((WhileStatementSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -111,7 +113,14 @@ namespace Compiler.CodeAnalysis.Binding
             var condition = BindExpression(syntax.Condition, typeof(bool));
             var thenStatement = BindStatement(syntax.ThenStatement);
             var elseStatement = syntax.ElseClause is null ? null : BindStatement(syntax.ElseClause.ElseStatement);
-            return new BoundIfStatement(condition, thenStatement, elseStatement);
+            return new BoundIfStatement(condition, thenStatement, elseStatement!);
+        }
+
+        private BoundStatement BindWhileStatement(WhileStatementSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition, typeof(bool));
+            var body = BindStatement(syntax.Body);
+            return new BoundWhileStatement(condition, body);
         }
 
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
