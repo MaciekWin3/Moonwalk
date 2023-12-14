@@ -44,6 +44,11 @@ namespace Compiler.Tests.CodeAnalysis
         [TestCase("!true", false)]
         [TestCase("!false", true)]
         [TestCase("{ var a = 0 (a = 10) * a }", 100)]
+        [TestCase("{ var a = 0 if a == 0 a = 10 a }", 10)]
+        [TestCase("{ var a = 0 if a == 5 a = 10 a }", 0)]
+
+        [TestCase("{ var a = 0 if a == 0 a = 10 else a = 20 a }", 10)]
+        [TestCase("{ var a = 0 if a == 1 a = 10 else a = 20 a }", 20)]
         public void EvaluatorComputesCorrectValues(string text, object expectedValue)
         {
             AssertValue(text, expectedValue);

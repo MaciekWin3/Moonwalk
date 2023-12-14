@@ -32,14 +32,18 @@
         LetKeyword,
         TrueKeyword,
         VarKeyword,
+        IfKeyword,
+        ElseKeyword,
 
         //Nodes
         CompilationUnit,
+        ElseClause,
 
         // Statements
         BlockStatement,
         VariableDeclaration,
         ExpressionStatement,
+        IfStatement,
 
         // Expressions
         LiteralExpression,

@@ -67,10 +67,13 @@ namespace Compiler.CodeAnalysis.Binding
                     return BindVariableDeclaration((VariableDeclarationSyntax)syntax);
                 case SyntaxKind.ExpressionStatement:
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
+                case SyntaxKind.IfStatement:
+                    return BindIfStatement((IfStatementSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
         }
+
 
         private BoundStatement BindBlockStatement(BlockStatementSyntax syntax)
         {
@@ -103,13 +106,32 @@ namespace Compiler.CodeAnalysis.Binding
             return new BoundVariableDeclaration(variable, initializer);
         }
 
+        private BoundStatement BindIfStatement(IfStatementSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition, typeof(bool));
+            var thenStatement = BindStatement(syntax.ThenStatement);
+            var elseStatement = syntax.ElseClause is null ? null : BindStatement(syntax.ElseClause.ElseStatement);
+            return new BoundIfStatement(condition, thenStatement, elseStatement);
+        }
+
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
         {
             var expression = BindExpression(syntax.Expression);
             return new BoundExpressionStatement(expression);
         }
 
-        public BoundExpression BindExpression(ExpressionSyntax syntax) =>
+        private BoundExpression BindExpression(ExpressionSyntax syntax, Type target)
+        {
+            var result = BindExpression(syntax);
+
+            if (result.Type != target)
+            {
+                diagnostics.ReportCannotConvert(syntax.Span, result.Type, target);
+            }
+            return result;
+        }
+
+        private BoundExpression BindExpression(ExpressionSyntax syntax) =>
             syntax.Kind switch
             {
                 SyntaxKind.ParenthesizedExpression => BindParenthesizedExpression(((ParenthesizedExpressionSyntax)syntax)),
