@@ -2,7 +2,7 @@
     <img src="./docs/logo.png" width=60%>
 </p>
 
-<h1 align="center">MoonWalk Compiler 🌕 </h1>
+<h1 align="center"> 🌕 MoonWalk Compiler 🌕 </h1>
 
 My first attempt at creating my own programming language.
 
@@ -21,8 +21,8 @@ For now the syntax is still in flux, but here is a simple example of what I am a
 ```
 import Terminal.Gui;
 
-module Main =
-	pub fn main(args: string[]): void {
+module Main {
+	pub func Main(args: string[]): void {
 		Application.Init();
 
 		let label: Label = create_label("Hello, World!");
@@ -32,7 +32,7 @@ module Main =
 		Application.Shutdown();
 	}
 
-	prv create_label(text: string): Label {
+	prv func CreateLabel(text: string): Label {
 		let label = new Label(text) {
 			X = Pos.Center(),
 			Y = Pos.Center(),
@@ -41,13 +41,14 @@ module Main =
 		return label;
 	}
 
-	prv import_example(): void {
-		Utils.print("Hello, World");
+	prv func ImportExample(): void {
+		Utils.Print("Hello, World");
 	}
+}
 
-module Utils =
+module Utils {
 
-	struct Person() {
+	pub struct Person() {
 
 		Name: string;
 		Age: int;
@@ -61,15 +62,25 @@ module Utils =
 		}
 	}
 
-	pub fn print(text: string): void {
+	pub func Print(text: string): void {
 		Console.WriteLine(string);
 	}
+}
 
-module Main.Tests =
+module Main.Tests {
+
 	import NUnit;
+
+	[Test]
+	pub func ShoudlAddTwoNumbers(): void {
+		let result = 1 + 1;
+		Assert.AreEqual(2, result);
+	}
+}
 ```
 
 ## References 📒
 
 - Building a Compiler Series by Immo Landwerth: https://www.youtube.com/watch?v=wgHIkdUQbp0&list=PLRAdsfhKI4OWNOSfS7EUu5GRAVmze1t2y
 - Introduction to Compilers and Language Design by Douglas Thain: https://www3.nd.edu/~dthain/compilerbook/
+- Crafting a Compiler by Charles N. Fischer, Richard Joseph LeBlanc and Ronald Kaplan Cytron: https://www.amazon.com/Crafting-Compiler-Charles-N-Fischer/dp/0136067050

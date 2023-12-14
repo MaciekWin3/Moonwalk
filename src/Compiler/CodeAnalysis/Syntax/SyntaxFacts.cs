@@ -13,6 +13,10 @@
 
                 SyntaxKind.EqualsEqualsToken => 3,
                 SyntaxKind.BangEqualsToken => 3,
+                SyntaxKind.LessToken => 3,
+                SyntaxKind.LessOrEqualsToken => 3,
+                SyntaxKind.GreaterToken => 3,
+                SyntaxKind.GreaterOrEqualsToken => 3,
 
                 SyntaxKind.AmpersandAmpersandToken => 2,
 
@@ -72,6 +76,10 @@
                 SyntaxKind.SlashToken => "/",
                 SyntaxKind.BangToken => "!",
                 SyntaxKind.EqualsToken => "=",
+                SyntaxKind.LessToken => "<",
+                SyntaxKind.LessOrEqualsToken => "<=",
+                SyntaxKind.GreaterToken => ">",
+                SyntaxKind.GreaterOrEqualsToken => ">=",
                 SyntaxKind.AmpersandAmpersandToken => "&&",
                 SyntaxKind.PipePipeToken => "||",
                 SyntaxKind.EqualsEqualsToken => "==",

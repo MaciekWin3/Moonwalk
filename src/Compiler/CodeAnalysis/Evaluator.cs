@@ -113,6 +113,10 @@ namespace Compiler.CodeAnalysis
                 BoundBinaryOperatorKind.LogicalOr => (bool)left || (bool)right,
                 BoundBinaryOperatorKind.Equals => Equals(left, right),
                 BoundBinaryOperatorKind.NotEquals => !Equals(left, right),
+                BoundBinaryOperatorKind.Less => (int)left < (int)right,
+                BoundBinaryOperatorKind.LessOrEquals => (int)left <= (int)right,
+                BoundBinaryOperatorKind.Greater => (int)left > (int)right,
+                BoundBinaryOperatorKind.GreaterOrEquals => (int)left >= (int)right,
                 _ => throw new NotSupportedException($"Error: Unexpected binary operator {syntaxKind}")
             };
     }

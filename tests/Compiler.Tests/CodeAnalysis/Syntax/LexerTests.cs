@@ -158,6 +158,10 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
                 (SyntaxKind.BangToken, SyntaxKind.EqualsEqualsToken) => true,
                 (SyntaxKind.EqualsToken, SyntaxKind.EqualsToken) => true,
                 (SyntaxKind.EqualsToken, SyntaxKind.EqualsEqualsToken) => true,
+                (SyntaxKind.LessToken, SyntaxKind.EqualsToken) => true,
+                (SyntaxKind.LessToken, SyntaxKind.EqualsEqualsToken) => true,
+                (SyntaxKind.GreaterToken, SyntaxKind.EqualsToken) => true,
+                (SyntaxKind.GreaterToken, SyntaxKind.EqualsEqualsToken) => true,
                 _ => false
             };
         }
