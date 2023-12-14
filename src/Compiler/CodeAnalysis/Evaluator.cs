@@ -29,6 +29,9 @@ namespace Compiler.CodeAnalysis
                 case BoundNodeKind.VariableDeclaration:
                     EvaluateVariableDeclaration((BoundVariableDeclaration)node);
                     break;
+                case BoundNodeKind.IfStatement:
+                    EvaluateIfStatement((BoundIfStatement)node);
+                    break;
                 case BoundNodeKind.ExpressionStatement:
                     EvaluateExpressionStatement((BoundExpressionStatement)node);
                     break;
@@ -36,6 +39,8 @@ namespace Compiler.CodeAnalysis
                     throw new Exception($"Unexpected node {node.Kind}");
             }
         }
+
+
 
         private void EvaluateVariableDeclaration(BoundVariableDeclaration node)
         {
@@ -48,6 +53,19 @@ namespace Compiler.CodeAnalysis
         {
             foreach (var statement in node.Statements)
                 EvaluateStatement(statement);
+        }
+
+        private void EvaluateIfStatement(BoundIfStatement node)
+        {
+            var condition = (bool)EvaluateExpression(node.Condition);
+            if (condition)
+            {
+                EvaluateStatement(node.ThenStatement);
+            }
+            else if (node.ElseStatement is not null)
+            {
+                EvaluateStatement(node.ElseStatement);
+            }
         }
 
         private void EvaluateExpressionStatement(BoundExpressionStatement node)
