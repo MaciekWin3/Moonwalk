@@ -128,6 +128,68 @@ namespace Compiler.Tests.CodeAnalysis
             AssertDiagnostics(text, "Binary operator '+' is not defined for types 'System.Int32' and 'System.Boolean'.");
         }
 
+        [Test]
+        public void EvaluatorIfStatementReportsCannotConvert()
+        {
+            // Arrange
+            var text = @"
+                {
+                    var x = 0
+                    if [10]
+                        x = 10
+                }";
+
+            // Act & Assert
+            AssertDiagnostics(text, "Cannot convert type 'System.Int32' to 'System.Boolean'.");
+        }
+
+        [Test]
+        public void EvaluatorWhileStatementReportsCannotConvert()
+        {
+            // Arrange
+            var text = @"
+                {
+                    var x = 0
+                    while [10]
+                        x = 10
+                }";
+
+            // Act & Assert
+            AssertDiagnostics(text, "Cannot convert type 'System.Int32' to 'System.Boolean'.");
+        }
+
+        [Test]
+        public void EvaluatorForStatementReportsCannotConvertLowerBound()
+        {
+            // Arrange
+            var text = @"
+                {
+                    var result = 0
+                    for i = [false] to 10
+                        result = result + i
+                }";
+
+            // Act & Assert
+            AssertDiagnostics(text, "Cannot convert type 'System.Boolean' to 'System.Int32'.");
+        }
+
+        [Test]
+        public void EvaluatorForStatementReportsCannotConvertUpperBound()
+        {
+            // Arrange
+            var text = @"
+                {
+                    var result = 0
+                    for i = 1 to [true]
+                        result = result + i
+                }";
+
+            // Act & Assert
+            AssertDiagnostics(text, "Cannot convert type 'System.Boolean' to 'System.Int32'.");
+        }
+
+
+
         private static void AssertValue(string text, object expectedValue)
         {
             // Arrange
