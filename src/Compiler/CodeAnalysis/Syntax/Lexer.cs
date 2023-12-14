@@ -120,6 +120,42 @@ namespace Compiler.CodeAnalysis.Syntax
                         position += 2;
                     }
                     break;
+                case '<':
+                    if (Lookahead != '=')
+                    {
+                        kind = SyntaxKind.LessToken;
+                        position++;
+                    }
+                    else
+                    {
+                        kind = SyntaxKind.LessOrEqualsToken;
+                        position += 2;
+                    }
+                    break;
+                case '>':
+                    if (Lookahead != '=')
+                    {
+                        kind = SyntaxKind.GreaterToken;
+                        position++;
+                    }
+                    else
+                    {
+                        kind = SyntaxKind.GreaterOrEqualsToken;
+                        position += 2;
+                    }
+                    break;
+                case '.':
+                    if (Lookahead != '.')
+                    {
+                        kind = SyntaxKind.DotToken;
+                        position++;
+                    }
+                    else
+                    {
+                        kind = SyntaxKind.DotDotToken;
+                        position += 2;
+                    }
+                    break;
                 case '0':
                 case '1':
                 case '2':
@@ -160,7 +196,6 @@ namespace Compiler.CodeAnalysis.Syntax
             text ??= this.text.ToString(start, length);
 
             return new SyntaxToken(kind, start, text, value);
-
         }
 
         private void ReadNumberToken()

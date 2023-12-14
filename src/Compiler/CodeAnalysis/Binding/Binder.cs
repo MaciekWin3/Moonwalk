@@ -67,10 +67,18 @@ namespace Compiler.CodeAnalysis.Binding
                     return BindVariableDeclaration((VariableDeclarationSyntax)syntax);
                 case SyntaxKind.ExpressionStatement:
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
+                case SyntaxKind.IfStatement:
+                    return BindIfStatement((IfStatementSyntax)syntax);
+                case SyntaxKind.WhileStatement:
+                    return BindWhileStatement((WhileStatementSyntax)syntax);
+                case SyntaxKind.ForStatement:
+                    return BindForStatement((ForStatementSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
         }
+
+
 
         private BoundStatement BindBlockStatement(BlockStatementSyntax syntax)
         {
@@ -103,13 +111,59 @@ namespace Compiler.CodeAnalysis.Binding
             return new BoundVariableDeclaration(variable, initializer);
         }
 
+        private BoundStatement BindIfStatement(IfStatementSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition, typeof(bool));
+            var thenStatement = BindStatement(syntax.ThenStatement);
+            var elseStatement = syntax.ElseClause is null ? null : BindStatement(syntax.ElseClause.ElseStatement);
+            return new BoundIfStatement(condition, thenStatement, elseStatement!);
+        }
+
+        private BoundStatement BindWhileStatement(WhileStatementSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition, typeof(bool));
+            var body = BindStatement(syntax.Body);
+            return new BoundWhileStatement(condition, body);
+        }
+        private BoundStatement BindForStatement(ForStatementSyntax syntax)
+        {
+            var lowerBound = BindExpression(syntax.LowerBound, typeof(int));
+            var upperBound = BindExpression(syntax.UpperBound, typeof(int));
+
+            scope = new BoundScope(scope);
+
+            var name = syntax.Identifier.Text;
+            // Should it be readonly?
+            var variable = new VariableSymbol(name, false, typeof(int));
+            if (!scope.TryDeclare(variable))
+            {
+                diagnostics.ReportVariableAlreadyDeclared(syntax.Identifier.Span, name);
+            }
+
+            var body = BindStatement(syntax.Body);
+
+            scope = scope.Parent;
+            return new BoundForStatement(variable, lowerBound, upperBound, body);
+        }
+
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
         {
             var expression = BindExpression(syntax.Expression);
             return new BoundExpressionStatement(expression);
         }
 
-        public BoundExpression BindExpression(ExpressionSyntax syntax) =>
+        private BoundExpression BindExpression(ExpressionSyntax syntax, Type target)
+        {
+            var result = BindExpression(syntax);
+
+            if (result.Type != target)
+            {
+                diagnostics.ReportCannotConvert(syntax.Span, result.Type, target);
+            }
+            return result;
+        }
+
+        private BoundExpression BindExpression(ExpressionSyntax syntax) =>
             syntax.Kind switch
             {
                 SyntaxKind.ParenthesizedExpression => BindParenthesizedExpression(((ParenthesizedExpressionSyntax)syntax)),
@@ -135,6 +189,12 @@ namespace Compiler.CodeAnalysis.Binding
         private BoundExpression BindNameExpression(NameExpressionSyntax syntax)
         {
             var name = syntax.IdentifierToken.Text;
+            if (string.IsNullOrEmpty(name))
+            {
+                // This means the token was inserted by the parser. We already
+                // reported error so we can just return an error expression.
+                return new BoundLiteralExpression(0);
+            }
 
             if (!scope.TryLookup(name, out var variable))
             {

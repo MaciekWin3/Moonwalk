@@ -158,6 +158,12 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
                 (SyntaxKind.BangToken, SyntaxKind.EqualsEqualsToken) => true,
                 (SyntaxKind.EqualsToken, SyntaxKind.EqualsToken) => true,
                 (SyntaxKind.EqualsToken, SyntaxKind.EqualsEqualsToken) => true,
+                (SyntaxKind.LessToken, SyntaxKind.EqualsToken) => true,
+                (SyntaxKind.LessToken, SyntaxKind.EqualsEqualsToken) => true,
+                (SyntaxKind.GreaterToken, SyntaxKind.EqualsToken) => true,
+                (SyntaxKind.GreaterToken, SyntaxKind.EqualsEqualsToken) => true,
+                (SyntaxKind.DotToken, SyntaxKind.DotToken) => true,
+                (SyntaxKind.DotToken, SyntaxKind.DotDotToken) => true,
                 _ => false
             };
         }
@@ -187,7 +193,9 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
                     if (RequiresSeparator(t1Kind, t2Kind))
                     {
                         foreach (var (separatorKind, separatorText) in GetSeparators())
+                        {
                             yield return (t1Kind, t1Text, separatorKind, separatorText, t2Kind, t2Text);
+                        }
                     }
                 }
             }

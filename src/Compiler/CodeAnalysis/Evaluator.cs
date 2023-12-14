@@ -29,6 +29,15 @@ namespace Compiler.CodeAnalysis
                 case BoundNodeKind.VariableDeclaration:
                     EvaluateVariableDeclaration((BoundVariableDeclaration)node);
                     break;
+                case BoundNodeKind.IfStatement:
+                    EvaluateIfStatement((BoundIfStatement)node);
+                    break;
+                case BoundNodeKind.WhileStatement:
+                    EvaluateWhileStatement((BoundWhileStatement)node);
+                    break;
+                case BoundNodeKind.ForStatement:
+                    EvaluateForStatement((BoundForStatement)node);
+                    break;
                 case BoundNodeKind.ExpressionStatement:
                     EvaluateExpressionStatement((BoundExpressionStatement)node);
                     break;
@@ -48,6 +57,36 @@ namespace Compiler.CodeAnalysis
         {
             foreach (var statement in node.Statements)
                 EvaluateStatement(statement);
+        }
+
+        private void EvaluateIfStatement(BoundIfStatement node)
+        {
+            var condition = (bool)EvaluateExpression(node.Condition);
+            if (condition)
+            {
+                EvaluateStatement(node.ThenStatement);
+            }
+            else if (node.ElseStatement is not null)
+            {
+                EvaluateStatement(node.ElseStatement);
+            }
+        }
+
+        private void EvaluateWhileStatement(BoundWhileStatement node)
+        {
+            while ((bool)EvaluateExpression(node.Condition))
+            {
+                EvaluateStatement(node.Body);
+            }
+        }
+
+        private void EvaluateForStatement(BoundForStatement node)
+        {
+            for (var i = (int)EvaluateExpression(node.LowerBound); i <= (int)EvaluateExpression(node.UpperBound); i++)
+            {
+                variables[node.Variable] = i;
+                EvaluateStatement(node.Body);
+            }
         }
 
         private void EvaluateExpressionStatement(BoundExpressionStatement node)
@@ -113,6 +152,10 @@ namespace Compiler.CodeAnalysis
                 BoundBinaryOperatorKind.LogicalOr => (bool)left || (bool)right,
                 BoundBinaryOperatorKind.Equals => Equals(left, right),
                 BoundBinaryOperatorKind.NotEquals => !Equals(left, right),
+                BoundBinaryOperatorKind.Less => (int)left < (int)right,
+                BoundBinaryOperatorKind.LessOrEquals => (int)left <= (int)right,
+                BoundBinaryOperatorKind.Greater => (int)left > (int)right,
+                BoundBinaryOperatorKind.GreaterOrEquals => (int)left >= (int)right,
                 _ => throw new NotSupportedException($"Error: Unexpected binary operator {syntaxKind}")
             };
     }

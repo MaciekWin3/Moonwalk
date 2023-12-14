@@ -13,6 +13,10 @@
 
                 SyntaxKind.EqualsEqualsToken => 3,
                 SyntaxKind.BangEqualsToken => 3,
+                SyntaxKind.LessToken => 3,
+                SyntaxKind.LessOrEqualsToken => 3,
+                SyntaxKind.GreaterToken => 3,
+                SyntaxKind.GreaterOrEqualsToken => 3,
 
                 SyntaxKind.AmpersandAmpersandToken => 2,
 
@@ -36,6 +40,11 @@
                 "false" => SyntaxKind.FalseKeyword,
                 "let" => SyntaxKind.LetKeyword,
                 "var" => SyntaxKind.VarKeyword,
+                "if" => SyntaxKind.IfKeyword,
+                "else" => SyntaxKind.ElseKeyword,
+                "while" => SyntaxKind.WhileKeyword,
+                "for" => SyntaxKind.ForKeyword,
+                "in" => SyntaxKind.InKeyword,
                 _ => SyntaxKind.IdentifierToken
             };
 
@@ -72,6 +81,10 @@
                 SyntaxKind.SlashToken => "/",
                 SyntaxKind.BangToken => "!",
                 SyntaxKind.EqualsToken => "=",
+                SyntaxKind.LessToken => "<",
+                SyntaxKind.LessOrEqualsToken => "<=",
+                SyntaxKind.GreaterToken => ">",
+                SyntaxKind.GreaterOrEqualsToken => ">=",
                 SyntaxKind.AmpersandAmpersandToken => "&&",
                 SyntaxKind.PipePipeToken => "||",
                 SyntaxKind.EqualsEqualsToken => "==",
@@ -80,10 +93,17 @@
                 SyntaxKind.CloseParenthesisToken => ")",
                 SyntaxKind.OpenBraceToken => "{",
                 SyntaxKind.CloseBraceToken => "}",
+                SyntaxKind.DotToken => ".",
+                SyntaxKind.DotDotToken => "..",
                 SyntaxKind.FalseKeyword => "false",
                 SyntaxKind.TrueKeyword => "true",
                 SyntaxKind.LetKeyword => "let",
                 SyntaxKind.VarKeyword => "var",
+                SyntaxKind.IfKeyword => "if",
+                SyntaxKind.ElseKeyword => "else",
+                SyntaxKind.WhileKeyword => "while",
+                SyntaxKind.ForKeyword => "for",
+                SyntaxKind.InKeyword => "in",
                 _ => null!,
             };
     }
