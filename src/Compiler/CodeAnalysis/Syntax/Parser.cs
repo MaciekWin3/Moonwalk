@@ -77,11 +77,10 @@ namespace Compiler.CodeAnalysis.Syntax
                 SyntaxKind.VarKeyword => ParseVariableDeclaration(),
                 SyntaxKind.IfKeyword => ParseIfStatement(),
                 SyntaxKind.WhileKeyword => ParseWhileStatement(),
+                SyntaxKind.ForKeyword => ParseForStatement(),
                 _ => ParseExpressionStatement(),
             };
         }
-
-
 
         private BlockStatementSyntax ParseBlockStatement()
         {
@@ -138,6 +137,18 @@ namespace Compiler.CodeAnalysis.Syntax
             var condition = ParseExpression();
             var body = ParseStatement();
             return new WhileStatementSyntax(keyword, condition, body);
+        }
+
+        private StatementSyntax ParseForStatement()
+        {
+            var forKeyword = MatchToken(SyntaxKind.ForKeyword);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var inKeyword = MatchToken(SyntaxKind.InKeyword);
+            var lowerBound = ParseExpression();
+            var dotDotToken = MatchToken(SyntaxKind.DotDotToken);
+            var upperBound = ParseExpression();
+            var body = ParseStatement();
+            return new ForStatementSyntax(forKeyword, identifier, inKeyword, lowerBound, dotDotToken, upperBound, body);
         }
 
         private ExpressionStatementSyntax ParseExpressionStatement()

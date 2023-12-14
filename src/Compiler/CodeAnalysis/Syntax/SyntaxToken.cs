@@ -2,7 +2,6 @@
 
 namespace Compiler.CodeAnalysis.Syntax
 {
-    // 1:15:10
     public sealed class SyntaxToken : SyntaxNode
     {
         public override SyntaxKind Kind { get; }

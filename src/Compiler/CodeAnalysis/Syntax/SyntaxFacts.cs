@@ -43,7 +43,8 @@
                 "if" => SyntaxKind.IfKeyword,
                 "else" => SyntaxKind.ElseKeyword,
                 "while" => SyntaxKind.WhileKeyword,
-
+                "for" => SyntaxKind.ForKeyword,
+                "in" => SyntaxKind.InKeyword,
                 _ => SyntaxKind.IdentifierToken
             };
 
@@ -92,6 +93,8 @@
                 SyntaxKind.CloseParenthesisToken => ")",
                 SyntaxKind.OpenBraceToken => "{",
                 SyntaxKind.CloseBraceToken => "}",
+                SyntaxKind.DotToken => ".",
+                SyntaxKind.DotDotToken => "..",
                 SyntaxKind.FalseKeyword => "false",
                 SyntaxKind.TrueKeyword => "true",
                 SyntaxKind.LetKeyword => "let",
@@ -99,6 +102,8 @@
                 SyntaxKind.IfKeyword => "if",
                 SyntaxKind.ElseKeyword => "else",
                 SyntaxKind.WhileKeyword => "while",
+                SyntaxKind.ForKeyword => "for",
+                SyntaxKind.InKeyword => "in",
                 _ => null!,
             };
     }

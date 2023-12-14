@@ -26,6 +26,8 @@
         GreaterOrEqualsToken,
         AmpersandAmpersandToken,
         PipePipeToken,
+        DotToken,
+        DotDotToken,
 
         // Keywords
         FalseKeyword,
@@ -35,6 +37,8 @@
         IfKeyword,
         ElseKeyword,
         WhileKeyword,
+        ForKeyword,
+        InKeyword,
 
         //Nodes
         CompilationUnit,
@@ -46,6 +50,7 @@
         ExpressionStatement,
         IfStatement,
         WhileStatement,
+        ForStatement,
 
         // Expressions
         LiteralExpression,
@@ -54,5 +59,6 @@
         ParenthesizedExpression,
         UnaryExpression,
         AssignmentExpression,
+
     }
 }
