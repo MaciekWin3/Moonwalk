@@ -164,6 +164,10 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
                 (SyntaxKind.GreaterToken, SyntaxKind.EqualsEqualsToken) => true,
                 (SyntaxKind.DotToken, SyntaxKind.DotToken) => true,
                 (SyntaxKind.DotToken, SyntaxKind.DotDotToken) => true,
+                (SyntaxKind.AmpersandToken, SyntaxKind.AmpersandToken) => true,
+                (SyntaxKind.AmpersandToken, SyntaxKind.AmpersandAmpersandToken) => true,
+                (SyntaxKind.PipeToken, SyntaxKind.PipeToken) => true,
+                (SyntaxKind.PipeToken, SyntaxKind.PipePipeToken) => true,
                 _ => false
             };
         }

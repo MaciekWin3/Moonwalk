@@ -18,9 +18,12 @@
                 SyntaxKind.GreaterToken => 3,
                 SyntaxKind.GreaterOrEqualsToken => 3,
 
+                SyntaxKind.AmpersandToken => 2,
                 SyntaxKind.AmpersandAmpersandToken => 2,
 
+                SyntaxKind.PipeToken => 1,
                 SyntaxKind.PipePipeToken => 1,
+                SyntaxKind.HatToken => 1,
                 _ => 0,
             };
 
@@ -30,6 +33,7 @@
                 SyntaxKind.PlusToken => 6,
                 SyntaxKind.MinusToken => 6,
                 SyntaxKind.BangToken => 6,
+                SyntaxKind.TildeToken => 6,
                 _ => 0,
             };
 
@@ -85,8 +89,12 @@
                 SyntaxKind.LessOrEqualsToken => "<=",
                 SyntaxKind.GreaterToken => ">",
                 SyntaxKind.GreaterOrEqualsToken => ">=",
+                SyntaxKind.TildeToken => "~",
+                SyntaxKind.AmpersandToken => "&",
                 SyntaxKind.AmpersandAmpersandToken => "&&",
+                SyntaxKind.PipeToken => "|",
                 SyntaxKind.PipePipeToken => "||",
+                SyntaxKind.HatToken => "^",
                 SyntaxKind.EqualsEqualsToken => "==",
                 SyntaxKind.BangEqualsToken => "!=",
                 SyntaxKind.OpenParenthesisToken => "(",

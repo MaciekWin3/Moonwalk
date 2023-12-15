@@ -24,9 +24,10 @@ namespace Compiler.CodeAnalysis.Binding
 
         private static BoundUnaryOperator[] operators =
         {
-            new BoundUnaryOperator(SyntaxKind.BangToken, BoundUnaryOperatorKind.LogicalNegation, typeof(bool)),
-            new BoundUnaryOperator(SyntaxKind.PlusToken, BoundUnaryOperatorKind.Identity, typeof(int)),
-            new BoundUnaryOperator(SyntaxKind.MinusToken, BoundUnaryOperatorKind.Negation, typeof(int))
+            new(SyntaxKind.BangToken, BoundUnaryOperatorKind.LogicalNegation, typeof(bool)),
+            new(SyntaxKind.PlusToken, BoundUnaryOperatorKind.Identity, typeof(int)),
+            new(SyntaxKind.MinusToken, BoundUnaryOperatorKind.Negation, typeof(int)),
+            new(SyntaxKind.TildeToken, BoundUnaryOperatorKind.OnesComplement, typeof(int)),
         };
 
         public static BoundUnaryOperator Bind(SyntaxKind syntaxKind, Type operandType)
