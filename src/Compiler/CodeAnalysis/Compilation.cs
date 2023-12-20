@@ -1,4 +1,5 @@
 ﻿using Compiler.CodeAnalysis.Binding;
+using Compiler.CodeAnalysis.Lowering;
 using Compiler.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
@@ -48,14 +49,22 @@ namespace Compiler.CodeAnalysis
                 return new EvaluationResult(diagnostics, null!);
             }
 
-            var evaluator = new Evaluator(GlobalScope.Statement, variables);
+            var statement = GetStatement();
+            var evaluator = new Evaluator(statement, variables);
             var value = evaluator.Evaluate();
             return new EvaluationResult(ImmutableArray<Diagnostic>.Empty, value);
         }
 
         public void EmitTree(TextWriter writer)
         {
-            GlobalScope.Statement.WriteTo(writer);
+            var statement = GetStatement();
+            statement.WriteTo(writer);
+        }
+
+        private BoundStatement GetStatement()
+        {
+            var result = GlobalScope.Statement;
+            return Lowerer.Lower(result);
         }
     }
 }
