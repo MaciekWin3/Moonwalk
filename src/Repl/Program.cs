@@ -71,9 +71,6 @@ while (true)
     }
 
     var compilation = previous is null ? new Compilation(syntaxTree) : previous.ContinueWith(syntaxTree);
-    var result = compilation.Evaluate(variables);
-
-    var diagnostics = result.Diagnostics;
 
     if (showTree)
     {
@@ -86,6 +83,9 @@ while (true)
     {
         compilation.EmitTree(Console.Out);
     }
+
+    var result = compilation.Evaluate(variables);
+    var diagnostics = result.Diagnostics;
 
     if (!diagnostics.Any())
     {
