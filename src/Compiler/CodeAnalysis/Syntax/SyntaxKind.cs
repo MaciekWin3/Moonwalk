@@ -28,6 +28,10 @@
         PipePipeToken,
         DotToken,
         DotDotToken,
+        TildeToken,
+        AmpersandToken,
+        PipeToken,
+        HatToken,
 
         // Keywords
         FalseKeyword,
@@ -59,6 +63,5 @@
         ParenthesizedExpression,
         UnaryExpression,
         AssignmentExpression,
-
     }
 }

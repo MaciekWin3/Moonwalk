@@ -36,9 +36,6 @@ namespace Compiler.CodeAnalysis.Syntax
 
         public SyntaxToken Lex()
         {
-            // <numbers>
-            // + = * / ( )
-            // <whitespace>
             start = position;
             kind = SyntaxKind.InvalidToken;
             value = null!;
@@ -80,12 +77,24 @@ namespace Compiler.CodeAnalysis.Syntax
                     kind = SyntaxKind.CloseBraceToken;
                     position++;
                     break;
+                case '~':
+                    kind = SyntaxKind.TildeToken;
+                    position++;
+                    break;
+                case '^':
+                    kind = SyntaxKind.HatToken;
+                    position++;
+                    break;
                 case '&':
                     if (Lookahead == '&')
                     {
                         kind = SyntaxKind.AmpersandAmpersandToken;
                         position += 2;
-                        break;
+                    }
+                    else
+                    {
+                        kind = SyntaxKind.AmpersandToken;
+                        position++;
                     }
                     break;
                 case '|':
@@ -94,6 +103,11 @@ namespace Compiler.CodeAnalysis.Syntax
                         kind = SyntaxKind.PipePipeToken;
                         position += 2;
                         break;
+                    }
+                    else
+                    {
+                        kind = SyntaxKind.PipeToken;
+                        position++;
                     }
                     break;
                 case '=':

@@ -6,6 +6,7 @@ using Compiler.CodeAnalysis.Text;
 using System.Text;
 
 bool showTree = false;
+bool showProgram = false;
 var variables = new Dictionary<VariableSymbol, object>();
 var textBuilder = new StringBuilder();
 Compilation previous = null!;
@@ -37,7 +38,13 @@ while (true)
         else if (input == "#showTree")
         {
             showTree = !showTree;
-            Console.WriteLine(showTree ? "Showing parse trees." : "Not showing parse trees");
+            Console.WriteLine(showTree ? "Showing parse trees." : "Not showing parse trees.");
+            continue;
+        }
+        else if (input == "#showProgram")
+        {
+            showProgram = !showProgram;
+            Console.WriteLine(showProgram ? "Showing bound trees." : "Not showing bound trees/");
             continue;
         }
         else if (input == "cls()")
@@ -64,9 +71,6 @@ while (true)
     }
 
     var compilation = previous is null ? new Compilation(syntaxTree) : previous.ContinueWith(syntaxTree);
-    var result = compilation.Evaluate(variables);
-
-    var diagnostics = result.Diagnostics;
 
     if (showTree)
     {
@@ -74,6 +78,14 @@ while (true)
         syntaxTree.Root.WriteTo(Console.Out);
         Console.ResetColor();
     }
+
+    if (showProgram)
+    {
+        compilation.EmitTree(Console.Out);
+    }
+
+    var result = compilation.Evaluate(variables);
+    var diagnostics = result.Diagnostics;
 
     if (!diagnostics.Any())
     {
