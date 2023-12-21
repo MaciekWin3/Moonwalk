@@ -35,9 +35,6 @@ namespace Compiler.CodeAnalysis
                 case BoundNodeKind.WhileStatement:
                     EvaluateWhileStatement((BoundWhileStatement)node);
                     break;
-                case BoundNodeKind.ForStatement:
-                    EvaluateForStatement((BoundForStatement)node);
-                    break;
                 case BoundNodeKind.ExpressionStatement:
                     EvaluateExpressionStatement((BoundExpressionStatement)node);
                     break;
@@ -76,15 +73,6 @@ namespace Compiler.CodeAnalysis
         {
             while ((bool)EvaluateExpression(node.Condition))
             {
-                EvaluateStatement(node.Body);
-            }
-        }
-
-        private void EvaluateForStatement(BoundForStatement node)
-        {
-            for (var i = (int)EvaluateExpression(node.LowerBound); i <= (int)EvaluateExpression(node.UpperBound); i++)
-            {
-                variables[node.Variable] = i;
                 EvaluateStatement(node.Body);
             }
         }
