@@ -131,7 +131,7 @@ namespace Compiler.CodeAnalysis.Binding
                 return node;
             }
 
-            return new BoundConditionalGotoStatement(node.Label, condition, node.JumpIfFalse);
+            return new BoundConditionalGotoStatement(node.Label, condition, node.JumpIfTrue);
         }
 
         public virtual BoundExpression RewriteExpression(BoundExpression node)
