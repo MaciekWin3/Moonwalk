@@ -66,7 +66,7 @@ namespace Repl
 
             var syntaxTree = SyntaxTree.Parse(text);
 
-            if (GetLastToken(syntaxTree.Root.Statement).IsMissing)
+            if (syntaxTree.Root.Statement.GetLastToken().IsMissing)
             {
                 return false;
             }
@@ -74,14 +74,6 @@ namespace Repl
             return true;
         }
 
-        private static SyntaxToken GetLastToken(SyntaxNode node)
-        {
-            if (node is SyntaxToken token)
-                return token;
-
-            // A syntax node should always contain at least 1 token.
-            return GetLastToken(node.GetChildren().Last());
-        }
 
         protected override void EvaluateSubmission(string text)
         {
