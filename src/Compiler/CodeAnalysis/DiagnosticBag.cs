@@ -29,7 +29,13 @@ namespace Compiler.CodeAnalysis
             Report(span, message);
         }
 
-        public void ReportBadNumber(int position, char character)
+        public void ReportUnterminatedString(TextSpan span)
+        {
+            var message = "Unterminated string literal.";
+            Report(span, message);
+        }
+
+        public void ReportBadCharacter(int position, char character)
         {
             var span = new TextSpan(position, 1);
             var message = $"Bad character input: `{character}`.";
@@ -77,5 +83,7 @@ namespace Compiler.CodeAnalysis
             var message = $"Variable '{name}' is read-only and cannot be assigned to.";
             Report(span, message);
         }
+
+
     }
 }
