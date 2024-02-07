@@ -73,6 +73,13 @@ namespace Repl
                 return true;
             }
 
+            var lastTwoLinesAreBlank = text.Split(Environment.NewLine).Reverse().Take(2).All(string.IsNullOrWhiteSpace);
+
+            if (lastTwoLinesAreBlank)
+            {
+                return true;
+            }
+
             var syntaxTree = SyntaxTree.Parse(text);
 
             if (syntaxTree.Root.Statement.GetLastToken().IsMissing)
