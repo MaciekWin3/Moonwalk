@@ -1,4 +1,5 @@
-﻿using Compiler.CodeAnalysis.Syntax;
+﻿using Compiler.CodeAnalysis.Symbols;
+using Compiler.CodeAnalysis.Syntax;
 using Compiler.CodeAnalysis.Syntax.Expressions;
 using Compiler.Tests.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
