@@ -127,7 +127,7 @@ namespace Compiler.Tests.CodeAnalysis
                 }";
 
             // Act & Assert
-            AssertDiagnostics(text, "Cannot convert type 'System.Int32' to 'System.Boolean'.");
+            AssertDiagnostics(text, "Cannot convert type 'int' to 'bool'.");
         }
 
         [Test]
@@ -142,7 +142,7 @@ namespace Compiler.Tests.CodeAnalysis
                 }";
 
             // Act & Assert
-            AssertDiagnostics(text, "Cannot convert type 'System.Int32' to 'System.Boolean'.");
+            AssertDiagnostics(text, "Cannot convert type 'int' to 'bool'.");
         }
 
         [Test]
@@ -157,7 +157,7 @@ namespace Compiler.Tests.CodeAnalysis
                 }";
 
             // Act & Assert
-            AssertDiagnostics(text, "Cannot convert type 'System.Boolean' to 'System.Int32'.");
+            AssertDiagnostics(text, "Cannot convert type 'bool' to 'int'.");
         }
 
         [Test]
@@ -172,7 +172,7 @@ namespace Compiler.Tests.CodeAnalysis
                 }";
 
             // Act & Assert
-            AssertDiagnostics(text, "Cannot convert type 'System.Boolean' to 'System.Int32'.");
+            AssertDiagnostics(text, "Cannot convert type 'bool' to 'int'.");
         }
 
         [Test]
@@ -182,7 +182,7 @@ namespace Compiler.Tests.CodeAnalysis
             var text = "[+]true";
 
             // Act & Assert
-            AssertDiagnostics(text, "Unary operator '+' is not defined for type 'System.Boolean'.");
+            AssertDiagnostics(text, "Unary operator '+' is not defined for type 'bool'.");
         }
 
         [Test]
@@ -192,7 +192,7 @@ namespace Compiler.Tests.CodeAnalysis
             var text = "10 [+] true";
 
             // Act & Assert
-            AssertDiagnostics(text, "Binary operator '+' is not defined for types 'System.Int32' and 'System.Boolean'.");
+            AssertDiagnostics(text, "Binary operator '+' is not defined for types 'int' and 'bool'.");
         }
 
         [Test]
@@ -250,7 +250,7 @@ namespace Compiler.Tests.CodeAnalysis
                 }";
 
             // Act & Assert
-            AssertDiagnostics(text, "Cannot convert type 'System.Boolean' to 'System.Int32'.");
+            AssertDiagnostics(text, "Cannot convert type 'bool' to 'int'.");
         }
 
 
