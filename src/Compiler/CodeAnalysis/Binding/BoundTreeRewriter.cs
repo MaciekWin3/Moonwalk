@@ -138,6 +138,7 @@ namespace Compiler.CodeAnalysis.Binding
         {
             return node.Kind switch
             {
+                BoundNodeKind.ErrorExpression => RewriteErrorExpression((BoundErrorExpression)node),
                 BoundNodeKind.LiteralExpression => RewriteLiteralExpression((BoundLiteralExpression)node),
                 BoundNodeKind.VariableExpression => RewriteVariableExpression((BoundVariableExpression)node),
                 BoundNodeKind.AssignmentExpression => RewriteAssignmentExpression((BoundAssignmentExpression)node),
@@ -145,6 +146,11 @@ namespace Compiler.CodeAnalysis.Binding
                 BoundNodeKind.BinaryExpression => RewriteBinaryExpression((BoundBinaryExpression)node),
                 _ => throw new Exception($"Unexpected node: {node.Kind}"),
             };
+        }
+
+        protected virtual BoundExpression RewriteErrorExpression(BoundErrorExpression node)
+        {
+            return node;
         }
 
         protected virtual BoundExpression RewriteBinaryExpression(BoundBinaryExpression node)
