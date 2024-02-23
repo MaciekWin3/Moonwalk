@@ -1,4 +1,6 @@
-﻿using Compiler.CodeAnalysis.Text;
+﻿using Compiler.CodeAnalysis.Symbols;
+using Compiler.CodeAnalysis.Text;
+using System.Text;
 
 namespace Compiler.CodeAnalysis.Syntax
 {
@@ -170,6 +172,9 @@ namespace Compiler.CodeAnalysis.Syntax
                         position += 2;
                     }
                     break;
+                case '\"':
+                    ReadString();
+                    break;
                 case '0':
                 case '1':
                 case '2':
@@ -199,7 +204,7 @@ namespace Compiler.CodeAnalysis.Syntax
                     }
                     else
                     {
-                        diagnostics.ReportBadNumber(position, Current);
+                        diagnostics.ReportBadCharacter(position, Current);
                         position++;
                     }
                     break;
@@ -207,9 +212,54 @@ namespace Compiler.CodeAnalysis.Syntax
 
             var length = position - start;
             var text = SyntaxFacts.GetText(kind);
-            text ??= this.text.ToString(start, length);
+            if (text is null)
+            {
+                text = this.text.ToString(start, length);
+            }
 
             return new SyntaxToken(kind, start, text, value);
+        }
+
+        private void ReadString()
+        {
+            // Skip the current quote
+            position++;
+
+            var sb = new StringBuilder();
+            var done = false;
+
+            while (!done)
+            {
+                switch (Current)
+                {
+                    case '\0':
+                    case '\r':
+                    case '\n':
+                        var span = new TextSpan(start, 1);
+                        diagnostics.ReportUnterminatedString(span);
+                        done = true;
+                        break;
+                    case '"':
+                        if (Lookahead == '"')
+                        {
+                            sb.Append(Current);
+                            position += 2;
+                        }
+                        else
+                        {
+                            position++;
+                            done = true;
+                        }
+                        break;
+                    default:
+                        sb.Append(Current);
+                        position++;
+                        break;
+                }
+            }
+
+            kind = SyntaxKind.StringToken;
+            value = sb.ToString();
         }
 
         private void ReadNumberToken()
@@ -222,7 +272,7 @@ namespace Compiler.CodeAnalysis.Syntax
             string tokenText = text.ToString(start, length);
             if (!int.TryParse(tokenText, out int value))
             {
-                diagnostics.ReportInvalidNumber(new TextSpan(start, length), tokenText, typeof(int));
+                diagnostics.ReportInvalidNumber(new TextSpan(start, length), tokenText, TypeSymbol.Int);
             }
 
             this.value = value;

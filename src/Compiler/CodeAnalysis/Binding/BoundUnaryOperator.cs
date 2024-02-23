@@ -1,4 +1,5 @@
-﻿using Compiler.CodeAnalysis.Syntax;
+﻿using Compiler.CodeAnalysis.Symbols;
+using Compiler.CodeAnalysis.Syntax;
 
 namespace Compiler.CodeAnalysis.Binding
 {
@@ -6,10 +7,10 @@ namespace Compiler.CodeAnalysis.Binding
     {
         public SyntaxKind SyntaxKind { get; }
         public BoundUnaryOperatorKind Kind { get; }
-        public Type OperandType { get; }
-        public Type Type { get; }
+        public TypeSymbol OperandType { get; }
+        public TypeSymbol Type { get; }
 
-        private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType, Type resultType)
+        private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, TypeSymbol operandType, TypeSymbol resultType)
         {
             SyntaxKind = syntaxKind;
             Kind = kind;
@@ -17,20 +18,20 @@ namespace Compiler.CodeAnalysis.Binding
             Type = resultType;
         }
 
-        private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, Type operandType)
+        private BoundUnaryOperator(SyntaxKind syntaxKind, BoundUnaryOperatorKind kind, TypeSymbol operandType)
             : this(syntaxKind, kind, operandType, operandType)
         {
         }
 
         private static BoundUnaryOperator[] operators =
         {
-            new(SyntaxKind.BangToken, BoundUnaryOperatorKind.LogicalNegation, typeof(bool)),
-            new(SyntaxKind.PlusToken, BoundUnaryOperatorKind.Identity, typeof(int)),
-            new(SyntaxKind.MinusToken, BoundUnaryOperatorKind.Negation, typeof(int)),
-            new(SyntaxKind.TildeToken, BoundUnaryOperatorKind.OnesComplement, typeof(int)),
+            new(SyntaxKind.BangToken, BoundUnaryOperatorKind.LogicalNegation, TypeSymbol.Bool),
+            new(SyntaxKind.PlusToken, BoundUnaryOperatorKind.Identity, TypeSymbol.Int),
+            new(SyntaxKind.MinusToken, BoundUnaryOperatorKind.Negation, TypeSymbol.Int),
+            new(SyntaxKind.TildeToken, BoundUnaryOperatorKind.OnesComplement, TypeSymbol.Int),
         };
 
-        public static BoundUnaryOperator Bind(SyntaxKind syntaxKind, Type operandType)
+        public static BoundUnaryOperator Bind(SyntaxKind syntaxKind, TypeSymbol operandType)
         {
             foreach (var op in operators)
             {

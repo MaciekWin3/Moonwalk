@@ -1,4 +1,5 @@
 ﻿using Compiler.CodeAnalysis.Syntax;
+using Compiler.CodeAnalysis.Text;
 using FluentAssertions;
 using NUnit.Framework;
 
@@ -8,7 +9,27 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
     public class LexerTests
     {
         [Test]
-        public void LexerTestsAllTokens()
+        public void LexerLexesUnterminatedString()
+        {
+            // Arrange
+            var text = "\"text";
+
+            // Act 
+            var tokens = SyntaxTree.ParseTokens(text, out var diagnostics);
+
+            // Assert
+            var token = tokens.Should().ContainSingle().Which;
+            token.Kind.Should().Be(SyntaxKind.StringToken);
+            token.Text.Should().Be("\"text");
+
+            var diagnostic = diagnostics.Should().ContainSingle().Which;
+            diagnostic.Span.Should().Be(new TextSpan(0, 1));
+            diagnostic.Message.Should().Be("Unterminated string literal.");
+
+        }
+
+        [Test]
+        public void LexerCoverAllTokens()
         {
             // Arrange
             var tokenKinds = Enum.GetValues(typeof(SyntaxKind))
@@ -125,6 +146,8 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
                 (SyntaxKind.NumberToken, "123"),
                 (SyntaxKind.IdentifierToken, "a"),
                 (SyntaxKind.IdentifierToken, "abc"),
+                (SyntaxKind.StringToken, "\"Test\""),
+                (SyntaxKind.StringToken, "\"Te\"\"st\""),
             };
 
             return fixedTokens.Concat(dynamicTokens);
@@ -154,6 +177,7 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
                 (_, SyntaxKind.IdentifierToken) when t1IsKeyword => true,
                 (SyntaxKind.IdentifierToken, _) when t2IsKeyword => true,
                 (SyntaxKind.NumberToken, SyntaxKind.NumberToken) => true,
+                (SyntaxKind.StringToken, SyntaxKind.StringToken) => true,
                 (SyntaxKind.BangToken, SyntaxKind.EqualsToken) => true,
                 (SyntaxKind.BangToken, SyntaxKind.EqualsEqualsToken) => true,
                 (SyntaxKind.EqualsToken, SyntaxKind.EqualsToken) => true,

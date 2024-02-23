@@ -1,4 +1,5 @@
 ﻿using Compiler.CodeAnalysis.Binding;
+using Compiler.CodeAnalysis.Symbols;
 
 namespace Compiler.CodeAnalysis
 {
@@ -15,7 +16,7 @@ namespace Compiler.CodeAnalysis
 
         public object Evaluate()
         {
-            var labelToIndex = new Dictionary<LabelSymbol, int>();
+            var labelToIndex = new Dictionary<BoundLabel, int>();
 
             for (var i = 0; i < Root.Statements.Length; i++)
             {
@@ -135,7 +136,7 @@ namespace Compiler.CodeAnalysis
                 case BoundBinaryOperatorKind.Division:
                     return (int)left / (int)right;
                 case BoundBinaryOperatorKind.BitwiseAnd:
-                    if (b.Type == (typeof(int)))
+                    if (b.Type == TypeSymbol.Int)
                     {
                         return (int)left & (int)right;
                     }
@@ -144,7 +145,7 @@ namespace Compiler.CodeAnalysis
                         return (bool)left & (bool)right;
                     }
                 case BoundBinaryOperatorKind.BitwiseOr:
-                    if (b.Type == (typeof(int)))
+                    if (b.Type == TypeSymbol.Int)
                     {
                         return (int)left | (int)right;
                     }
@@ -153,7 +154,7 @@ namespace Compiler.CodeAnalysis
                         return (bool)left | (bool)right;
                     }
                 case BoundBinaryOperatorKind.BitwiseXor:
-                    if (b.Type == (typeof(int)))
+                    if (b.Type == TypeSymbol.Int)
                     {
                         return (int)left ^ (int)right;
                     }
