@@ -253,8 +253,6 @@ namespace Compiler.Tests.CodeAnalysis
             AssertDiagnostics(text, "Cannot convert type 'bool' to 'int'.");
         }
 
-
-
         private static void AssertValue(string text, object expectedValue)
         {
             // Arrange
