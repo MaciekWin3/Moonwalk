@@ -18,8 +18,9 @@ namespace Repl
             foreach (var token in tokens)
             {
                 var isKeyword = token.Kind.ToString().EndsWith("Keyword");
-                var isNumber = token.Kind == SyntaxKind.NumberToken;
                 var isIdentifier = token.Kind == SyntaxKind.IdentifierToken;
+                var isNumber = token.Kind == SyntaxKind.NumberToken;
+                var isString = token.Kind == SyntaxKind.StringToken;
 
                 if (isKeyword)
                 {
@@ -32,6 +33,10 @@ namespace Repl
                 else if (isNumber)
                 {
                     Console.ForegroundColor = ConsoleColor.Cyan;
+                }
+                else if (isString)
+                {
+                    Console.ForegroundColor = ConsoleColor.Magenta;
                 }
                 else
                 {
@@ -114,7 +119,7 @@ namespace Repl
 
             if (!result.Diagnostics.Any())
             {
-                Console.ForegroundColor = ConsoleColor.Magenta;
+                Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine(result.Value);
                 Console.ResetColor();
                 previous = compilation;
