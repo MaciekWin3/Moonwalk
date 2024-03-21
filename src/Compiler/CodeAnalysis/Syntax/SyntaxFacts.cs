@@ -101,6 +101,7 @@
                 SyntaxKind.CloseParenthesisToken => ")",
                 SyntaxKind.OpenBraceToken => "{",
                 SyntaxKind.CloseBraceToken => "}",
+                SyntaxKind.CommaToken => ",",
                 SyntaxKind.DotToken => ".",
                 SyntaxKind.DotDotToken => "..",
                 SyntaxKind.FalseKeyword => "false",

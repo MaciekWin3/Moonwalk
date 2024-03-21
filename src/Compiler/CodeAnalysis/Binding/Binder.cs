@@ -126,7 +126,7 @@ namespace Compiler.CodeAnalysis.Binding
 
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
         {
-            var expression = BindExpression(syntax.Expression);
+            var expression = BindExpression(syntax.Expression, canBeVoid: true);
             return new BoundExpressionStatement(expression);
         }
 
@@ -140,7 +140,19 @@ namespace Compiler.CodeAnalysis.Binding
             return result;
         }
 
-        private BoundExpression BindExpression(ExpressionSyntax syntax) =>
+        private BoundExpression BindExpression(ExpressionSyntax syntax, bool canBeVoid = false)
+        {
+            var result = BindExpressionInternal(syntax);
+            if (!canBeVoid && result.Type == TypeSymbol.Void)
+            {
+                diagnostics.ReportExpressionMustHaveValue(syntax.Span);
+                return new BoundErrorExpression();
+            }
+
+            return result;
+        }
+
+        private BoundExpression BindExpressionInternal(ExpressionSyntax syntax) =>
             syntax.Kind switch
             {
                 SyntaxKind.ParenthesizedExpression => BindParenthesizedExpression(((ParenthesizedExpressionSyntax)syntax)),
@@ -149,6 +161,7 @@ namespace Compiler.CodeAnalysis.Binding
                 SyntaxKind.AssignmentExpression => BindAssignmentExpression((AssignmentExpressionSyntax)syntax),
                 SyntaxKind.UnaryExpression => BindUnaryExpression((UnaryExpressionSyntax)syntax),
                 SyntaxKind.BinaryExpression => BindBinaryExpression((BinaryExpressionSyntax)syntax),
+                SyntaxKind.CallExpression => BindCallExpression((CallExpressionSyntax)syntax),
                 _ => throw new Exception($"Unexpected syntax {syntax.Kind}")
             };
 
@@ -242,6 +255,46 @@ namespace Compiler.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
             return new BoundBinaryExpression(boundLeft, boundOperator, boundRight);
+        }
+
+        private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
+        {
+            var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
+
+            foreach (var argument in syntax.Arguments)
+            {
+                boundArguments.Add(BindExpression(argument));
+            }
+
+            var functions = BuiltinFunctions.GetAll();
+            var function = functions.SingleOrDefault(f => f.Name == syntax.Identifier.Text);
+            if (function is null)
+            {
+                diagnostics.ReportUndefinedFunction(syntax.Identifier.Span, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            if (syntax.Arguments.Count != function.Parameters.Length)
+            {
+                diagnostics.ReportWrongArgumentCount(syntax.Span, function.Name, function.Parameters.Length, syntax.Arguments.Count);
+                return new BoundErrorExpression();
+            }
+
+            var arguments = ImmutableArray.CreateBuilder<BoundExpression>();
+
+            for (int i = 0; i < syntax.Arguments.Count; i++)
+            {
+                var argument = boundArguments[i];
+                var parameter = function.Parameters[i];
+                if (argument.Type != parameter.Type)
+                {
+                    diagnostics.ReportWrongArgumentType(syntax.Span, parameter.Name, parameter.Type, argument.Type);
+                    return new BoundErrorExpression();
+                }
+                arguments.Add(argument);
+            }
+
+            return new BoundCallExpression(function, boundArguments.ToImmutable());
         }
 
         private VariableSymbol BindVariable(SyntaxToken identifier, bool isReadOnly, TypeSymbol type)

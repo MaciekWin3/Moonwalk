@@ -30,6 +30,14 @@ namespace Compiler.CodeAnalysis.Syntax
                         yield return child;
                     }
                 }
+                else if (typeof(SeparatedSyntaxList).IsAssignableFrom(property.PropertyType))
+                {
+                    var separatedSyntaxList = (SeparatedSyntaxList)property.GetValue(this)!;
+                    foreach (var child in separatedSyntaxList.GetWithSeparators())
+                    {
+                        yield return child;
+                    }
+                }
                 else if (typeof(IEnumerable<SyntaxNode>).IsAssignableFrom(property.PropertyType))
                 {
                     var children = (IEnumerable<SyntaxNode>)property.GetValue(this)!;

@@ -86,8 +86,11 @@ namespace Compiler.CodeAnalysis
             BoundNodeKind.AssignmentExpression => EvaluateAssignmentExpression((BoundAssignmentExpression)node),
             BoundNodeKind.UnaryExpression => EvaluateUnaryExpression((BoundUnaryExpression)node),
             BoundNodeKind.BinaryExpression => EvaluateBinaryExpression((BoundBinaryExpression)node),
+            BoundNodeKind.CallExpression => EvaluateCallExpression((BoundCallExpression)node),
             _ => throw new Exception($"Error: Unexpected node {node.Kind}")
         };
+
+
 
         private static object EvaluateLiteralExpression(BoundLiteralExpression n)
         {
@@ -187,6 +190,24 @@ namespace Compiler.CodeAnalysis
                     return (int)left >= (int)right;
                 default:
                     throw new Exception($"Unexpected binary operator {b.Op}");
+            }
+        }
+
+        private object EvaluateCallExpression(BoundCallExpression node)
+        {
+            if (node.Function == BuiltinFunctions.Input)
+            {
+                return Console.ReadLine()!;
+            }
+            else if (node.Function == BuiltinFunctions.Print)
+            {
+                var message = (string)EvaluateExpression(node.Arguments[0]);
+                Console.WriteLine(message);
+                return null!;
+            }
+            else
+            {
+                throw new Exception($"Unexpected function {node.Function.Name}");
             }
         }
     }

@@ -119,9 +119,12 @@ namespace Repl
 
             if (!result.Diagnostics.Any())
             {
-                Console.ForegroundColor = ConsoleColor.White;
-                Console.WriteLine(result.Value);
-                Console.ResetColor();
+                if (result.Value is not null)
+                {
+                    Console.ForegroundColor = ConsoleColor.White;
+                    Console.WriteLine(result.Value);
+                    Console.ResetColor();
+                }
                 previous = compilation;
             }
             else
