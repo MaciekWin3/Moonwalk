@@ -33,6 +33,7 @@
         AmpersandToken,
         PipeToken,
         HatToken,
+        CommaToken,
 
         // Keywords
         FalseKeyword,
@@ -64,5 +65,6 @@
         ParenthesizedExpression,
         UnaryExpression,
         AssignmentExpression,
+        CallExpression,
     }
 }

@@ -7,6 +7,8 @@ namespace Compiler.CodeAnalysis
     {
         private readonly BoundBlockStatement Root;
         private readonly Dictionary<VariableSymbol, object> variables = new();
+        private Random random;
+
         private object lastValue = null!;
         public Evaluator(BoundBlockStatement root, Dictionary<VariableSymbol, object> variables)
         {
@@ -86,6 +88,8 @@ namespace Compiler.CodeAnalysis
             BoundNodeKind.AssignmentExpression => EvaluateAssignmentExpression((BoundAssignmentExpression)node),
             BoundNodeKind.UnaryExpression => EvaluateUnaryExpression((BoundUnaryExpression)node),
             BoundNodeKind.BinaryExpression => EvaluateBinaryExpression((BoundBinaryExpression)node),
+            BoundNodeKind.CallExpression => EvaluateCallExpression((BoundCallExpression)node),
+            BoundNodeKind.ConversionExpression => EvaluateConversionExpression((BoundConversionExpression)node),
             _ => throw new Exception($"Error: Unexpected node {node.Kind}")
         };
 
@@ -128,7 +132,14 @@ namespace Compiler.CodeAnalysis
             switch (b.Op.Kind)
             {
                 case BoundBinaryOperatorKind.Addition:
-                    return (int)left + (int)right;
+                    if (b.Type == TypeSymbol.Int)
+                    {
+                        return (int)left + (int)right;
+                    }
+                    else
+                    {
+                        return (string)left + (string)right;
+                    }
                 case BoundBinaryOperatorKind.Subtraction:
                     return (int)left - (int)right;
                 case BoundBinaryOperatorKind.Multiplication:
@@ -180,6 +191,54 @@ namespace Compiler.CodeAnalysis
                     return (int)left >= (int)right;
                 default:
                     throw new Exception($"Unexpected binary operator {b.Op}");
+            }
+        }
+
+        private object EvaluateCallExpression(BoundCallExpression node)
+        {
+            if (node.Function == BuiltinFunctions.Input)
+            {
+                return Console.ReadLine()!;
+            }
+            else if (node.Function == BuiltinFunctions.Print)
+            {
+                var message = (string)EvaluateExpression(node.Arguments[0]);
+                Console.WriteLine(message);
+                return null!;
+            }
+            else if (node.Function == BuiltinFunctions.Rnd)
+            {
+                var max = (int)EvaluateExpression(node.Arguments[0]);
+                if (random is null)
+                {
+                    random = new Random();
+                }
+                return random.Next(max);
+            }
+            else
+            {
+                throw new Exception($"Unexpected function {node.Function.Name}");
+            }
+        }
+
+        private object EvaluateConversionExpression(BoundConversionExpression node)
+        {
+            var value = EvaluateExpression(node.Expression);
+            if (node.Type == TypeSymbol.Bool)
+            {
+                return Convert.ToBoolean(value);
+            }
+            else if (node.Type == TypeSymbol.Int)
+            {
+                return Convert.ToInt32(value);
+            }
+            else if (node.Type == TypeSymbol.String)
+            {
+                return Convert.ToString(value)!;
+            }
+            else
+            {
+                throw new Exception($"Unexpected type {node.Type}");
             }
         }
     }

@@ -144,6 +144,8 @@ namespace Compiler.CodeAnalysis.Binding
                 BoundNodeKind.AssignmentExpression => RewriteAssignmentExpression((BoundAssignmentExpression)node),
                 BoundNodeKind.UnaryExpression => RewriteUnaryExpression((BoundUnaryExpression)node),
                 BoundNodeKind.BinaryExpression => RewriteBinaryExpression((BoundBinaryExpression)node),
+                BoundNodeKind.CallExpression => RewriteCallExpression((BoundCallExpression)node),
+                BoundNodeKind.ConversionExpression => RewriteConversionExpression((BoundConversionExpression)node),
                 _ => throw new Exception($"Unexpected node: {node.Kind}"),
             };
         }
@@ -193,6 +195,51 @@ namespace Compiler.CodeAnalysis.Binding
         protected virtual BoundExpression RewriteLiteralExpression(BoundLiteralExpression node)
         {
             return node;
+        }
+
+        protected virtual BoundExpression RewriteCallExpression(BoundCallExpression node)
+        {
+            ImmutableArray<BoundExpression>.Builder? builder = null;
+
+            for (var i = 0; i < node.Arguments.Length; i++)
+            {
+                var oldArgument = node.Arguments[i];
+                var newArgument = RewriteExpression(oldArgument);
+                if (newArgument != oldArgument)
+                {
+                    if (builder is null)
+                    {
+                        builder = ImmutableArray.CreateBuilder<BoundExpression>(node.Arguments.Length);
+
+                        for (var j = 0; j < i; j++)
+                        {
+                            builder.Add(node.Arguments[j]);
+                        }
+                    }
+                }
+
+                if (builder is not null)
+                {
+                    builder.Add(newArgument);
+                }
+            }
+
+            if (builder is null)
+            {
+                return node;
+            }
+
+            return new BoundCallExpression(node.Function, builder.MoveToImmutable());
+        }
+
+        protected virtual BoundExpression RewriteConversionExpression(BoundConversionExpression node)
+        {
+            var expression = RewriteExpression(node.Expression);
+            if (expression == node.Expression)
+            {
+                return node;
+            }
+            return new BoundConversionExpression(node.Type, expression);
         }
     }
 }
