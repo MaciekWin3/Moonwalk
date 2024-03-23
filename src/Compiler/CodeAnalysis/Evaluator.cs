@@ -7,6 +7,8 @@ namespace Compiler.CodeAnalysis
     {
         private readonly BoundBlockStatement Root;
         private readonly Dictionary<VariableSymbol, object> variables = new();
+        private Random random;
+
         private object lastValue = null!;
         public Evaluator(BoundBlockStatement root, Dictionary<VariableSymbol, object> variables)
         {
@@ -204,6 +206,15 @@ namespace Compiler.CodeAnalysis
                 var message = (string)EvaluateExpression(node.Arguments[0]);
                 Console.WriteLine(message);
                 return null!;
+            }
+            else if (node.Function == BuiltinFunctions.Rnd)
+            {
+                var max = (int)EvaluateExpression(node.Arguments[0]);
+                if (random is null)
+                {
+                    random = new Random();
+                }
+                return random.Next(max);
             }
             else
             {
