@@ -89,10 +89,9 @@ namespace Compiler.CodeAnalysis
             BoundNodeKind.UnaryExpression => EvaluateUnaryExpression((BoundUnaryExpression)node),
             BoundNodeKind.BinaryExpression => EvaluateBinaryExpression((BoundBinaryExpression)node),
             BoundNodeKind.CallExpression => EvaluateCallExpression((BoundCallExpression)node),
+            BoundNodeKind.ConversionExpression => EvaluateConversionExpression((BoundConversionExpression)node),
             _ => throw new Exception($"Error: Unexpected node {node.Kind}")
         };
-
-
 
         private static object EvaluateLiteralExpression(BoundLiteralExpression n)
         {
@@ -219,6 +218,27 @@ namespace Compiler.CodeAnalysis
             else
             {
                 throw new Exception($"Unexpected function {node.Function.Name}");
+            }
+        }
+
+        private object EvaluateConversionExpression(BoundConversionExpression node)
+        {
+            var value = EvaluateExpression(node.Expression);
+            if (node.Type == TypeSymbol.Bool)
+            {
+                return Convert.ToBoolean(value);
+            }
+            else if (node.Type == TypeSymbol.Int)
+            {
+                return Convert.ToInt32(value);
+            }
+            else if (node.Type == TypeSymbol.String)
+            {
+                return Convert.ToString(value)!;
+            }
+            else
+            {
+                throw new Exception($"Unexpected type {node.Type}");
             }
         }
     }
