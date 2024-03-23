@@ -41,7 +41,7 @@ namespace Compiler.CodeAnalysis.Binding
                 previous = previous.Previous;
             }
 
-            BoundScope parent = null!;
+            var parent = CreateRootScope();
 
             while (stack.Count > 0)
             {
@@ -49,13 +49,23 @@ namespace Compiler.CodeAnalysis.Binding
                 var scope = new BoundScope(parent);
                 foreach (var v in previous.Variables)
                 {
-                    scope.TryDeclare(v);
+                    scope.TryDeclareVariable(v);
                 }
 
                 parent = scope;
             }
 
             return parent;
+        }
+
+        private static BoundScope CreateRootScope()
+        {
+            var result = new BoundScope(null!);
+            foreach (var f in BuiltinFunctions.GetAll())
+            {
+                result.TryDeclareFunction(f);
+            }
+            return result;
         }
 
         private BoundStatement BindStatement(StatementSyntax syntax)
@@ -186,7 +196,7 @@ namespace Compiler.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
-            if (!scope.TryLookup(name, out var variable))
+            if (!scope.TryLookupVariable(name, out var variable))
             {
                 diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
                 return new BoundErrorExpression();
@@ -199,7 +209,7 @@ namespace Compiler.CodeAnalysis.Binding
             var name = syntax.IdentifierToken.Text;
             var boundExpression = BindExpression(syntax.Expression);
 
-            if (!scope.TryLookup(name, out var variable))
+            if (!scope.TryLookupVariable(name, out var variable))
             {
                 diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
                 return boundExpression;
@@ -266,9 +276,7 @@ namespace Compiler.CodeAnalysis.Binding
                 boundArguments.Add(BindExpression(argument));
             }
 
-            var functions = BuiltinFunctions.GetAll();
-            var function = functions.SingleOrDefault(f => f.Name == syntax.Identifier.Text);
-            if (function is null)
+            if (!scope.TryLookupFunction(syntax.Identifier.Text, out var function))
             {
                 diagnostics.ReportUndefinedFunction(syntax.Identifier.Span, syntax.Identifier.Text);
                 return new BoundErrorExpression();
@@ -302,7 +310,7 @@ namespace Compiler.CodeAnalysis.Binding
             var name = identifier.Text ?? "?";
             var declare = !identifier.IsMissing;
             var variable = new VariableSymbol(name, isReadOnly, type);
-            if (declare && !scope.TryDeclare(variable))
+            if (declare && !scope.TryDeclareVariable(variable))
             {
                 diagnostics.ReportVariableAlreadyDeclared(identifier.Span, name);
             }
