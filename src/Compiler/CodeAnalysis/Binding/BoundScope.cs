@@ -5,8 +5,7 @@ namespace Compiler.CodeAnalysis.Binding
 {
     internal sealed class BoundScope
     {
-        private Dictionary<string, VariableSymbol> variables;
-        private Dictionary<string, FunctionSymbol> functions;
+        private Dictionary<string, Symbol> symbols;
 
         public BoundScope(BoundScope parent)
         {
@@ -15,29 +14,37 @@ namespace Compiler.CodeAnalysis.Binding
 
         public BoundScope Parent { get; }
 
-        public bool TryDeclareVariable(VariableSymbol variable)
+        public bool TryDeclareVariable(VariableSymbol variable) => TryDeclareSymbol(variable);
+        public bool TryDeclareFunction(FunctionSymbol function) => TryDeclareSymbol(function);
+        private bool TryDeclareSymbol<TSymbol>(TSymbol symbol) where TSymbol : Symbol
         {
-            if (variables is null)
+            if (symbols is null)
             {
-                variables = new();
+                symbols = new();
             }
-
-            if (variables.ContainsKey(variable.Name))
+            else if (symbols.ContainsKey(symbol.Name))
             {
                 return false;
             }
 
-            variables.Add(variable.Name, variable);
+            symbols.Add(symbol.Name, symbol);
             return true;
         }
 
-        public bool TryLookupVariable(string name, out VariableSymbol variable)
-        {
-            variable = null!;
+        public bool TryLookupVariable(string name, out VariableSymbol variable) => TryLookupSymbol(name, out variable);
+        public bool TryLookupFunction(string name, out FunctionSymbol function) => TryLookupSymbol(name, out function);
 
-            if (variables is not null && variables.TryGetValue(name, out variable!))
+        private bool TryLookupSymbol<TSymbol>(string name, out TSymbol symbol) where TSymbol : Symbol
+        {
+            symbol = null!;
+            if (symbols is not null && symbols.TryGetValue(name, out var declaredSymbol))
             {
-                return true;
+                if (declaredSymbol is TSymbol matchingSymbol)
+                {
+                    symbol = matchingSymbol;
+                    return true;
+                }
+                return false;
             }
 
             if (Parent is null)
@@ -45,58 +52,20 @@ namespace Compiler.CodeAnalysis.Binding
                 return false;
             }
 
-            return Parent.TryLookupVariable(name, out variable);
+            return Parent.TryLookupSymbol(name, out symbol);
         }
 
-        public bool TryDeclareFunction(FunctionSymbol function)
+
+        public ImmutableArray<VariableSymbol> GetDeclaredVariables() => GetDeclaredSymbols<VariableSymbol>();
+        public ImmutableArray<FunctionSymbol> GetDeclaredFunctions() => GetDeclaredSymbols<FunctionSymbol>();
+
+        private ImmutableArray<TSymbol> GetDeclaredSymbols<TSymbol>() where TSymbol : Symbol
         {
-            if (functions is null)
+            if (symbols is null)
             {
-                functions = new();
+                return ImmutableArray<TSymbol>.Empty;
             }
-
-            if (functions.ContainsKey(function.Name))
-            {
-                return false;
-            }
-
-            functions.Add(function.Name, function);
-            return true;
-        }
-
-        public bool TryLookupFunction(string name, out FunctionSymbol function)
-        {
-            function = null!;
-
-            if (functions is not null && functions.TryGetValue(name, out function!))
-            {
-                return true;
-            }
-
-            if (Parent is null)
-            {
-                return false;
-            }
-
-            return Parent.TryLookupFunction(name, out function);
-        }
-
-        public ImmutableArray<VariableSymbol> GetDeclaredVariables()
-        {
-            if (variables is null)
-            {
-                return ImmutableArray<VariableSymbol>.Empty;
-            }
-            return variables.Values.ToImmutableArray();
-        }
-
-        public ImmutableArray<FunctionSymbol> GetDeclaredFunctions()
-        {
-            if (functions is null)
-            {
-                return ImmutableArray<FunctionSymbol>.Empty;
-            }
-            return functions.Values.ToImmutableArray();
+            return symbols.Values.OfType<TSymbol>().ToImmutableArray();
         }
     }
 }
