@@ -5,7 +5,7 @@ namespace Compiler.CodeAnalysis.Binding
 {
     internal sealed class BoundScope
     {
-        private Dictionary<string, Symbol> symbols;
+        private Dictionary<string, Symbol>? symbols;
 
         public BoundScope(BoundScope parent)
         {
