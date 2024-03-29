@@ -253,6 +253,25 @@ namespace Compiler.Tests.CodeAnalysis
             AssertDiagnostics(text, "Cannot convert type 'bool' to 'int'.");
         }
 
+        [Test]
+        public void Evaluator_Variables_Can_Shadow_Functions()
+        {
+            // Arrange
+            var text = @"
+                {
+                    let print = 42
+                    [print](""test"")
+                }
+            ";
+
+            var diagnostics = @"
+                Function 'print' doesn't exist.
+            ";
+
+            // Act & Assert
+            AssertDiagnostics(text, diagnostics);
+        }
+
         private static void AssertValue(string text, object expectedValue)
         {
             // Arrange
