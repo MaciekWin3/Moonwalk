@@ -333,7 +333,7 @@ namespace Compiler.CodeAnalysis.Binding
             var variable = new VariableSymbol(name, isReadOnly, type);
             if (declare && !scope.TryDeclareVariable(variable))
             {
-                diagnostics.ReportVariableAlreadyDeclared(identifier.Span, name);
+                diagnostics.ReportSymbolAlreadyDeclared(identifier.Span, name);
             }
 
             return variable;

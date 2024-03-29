@@ -95,7 +95,7 @@ namespace Compiler.Tests.CodeAnalysis
             ";
 
             // Act & Assert
-            AssertDiagnostics(text, "Variable 'x' is already declared.");
+            AssertDiagnostics(text, "'x' is already declared.");
         }
 
         [Test]
@@ -265,7 +265,7 @@ namespace Compiler.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                Function 'print' doesn't exist.
+                Function 'print' doesn't exists.
             ";
 
             // Act & Assert
