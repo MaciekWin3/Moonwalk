@@ -1,6 +1,7 @@
 ﻿using Compiler.CodeAnalysis.Symbols;
 using Compiler.CodeAnalysis.Syntax;
 using Compiler.CodeAnalysis.Syntax.Expressions;
+using Compiler.CodeAnalysis.Text;
 using Compiler.Tests.CodeAnalysis.Syntax;
 using System.Collections.Immutable;
 
@@ -142,12 +143,7 @@ namespace Compiler.CodeAnalysis.Binding
 
         private BoundExpression BindExpression(ExpressionSyntax syntax, TypeSymbol targetType)
         {
-            var result = BindExpression(syntax);
-            if (targetType != TypeSymbol.Error && result.Type != TypeSymbol.Error && result.Type != targetType)
-            {
-                diagnostics.ReportCannotConvert(syntax.Span, result.Type, targetType);
-            }
-            return result;
+            return BindConversion(syntax, targetType);
         }
 
         private BoundExpression BindExpression(ExpressionSyntax syntax, bool canBeVoid = false)
@@ -220,13 +216,8 @@ namespace Compiler.CodeAnalysis.Binding
                 diagnostics.ReportCannotAssign(syntax.EqualsToken.Span, name);
             }
 
-            if (boundExpression.Type != variable.Type)
-            {
-                diagnostics.ReportCannotConvert(syntax.Expression.Span, boundExpression.Type, variable.Type);
-                return boundExpression;
-            }
-
-            return new BoundAssignmentExpression(variable, boundExpression);
+            var convertedExpression = BindConversion(syntax.Expression.Span, boundExpression, variable.Type);
+            return new BoundAssignmentExpression(variable, convertedExpression);
         }
 
         private BoundExpression BindUnaryExpression(UnaryExpressionSyntax syntax)
@@ -271,7 +262,7 @@ namespace Compiler.CodeAnalysis.Binding
         {
             if (syntax.Arguments.Count == 1 && LookupType(syntax.Identifier.Text) is TypeSymbol type)
             {
-                return BindConversion(type, syntax.Arguments[0]);
+                return BindConversion(syntax.Arguments[0], type);
             }
 
             var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
@@ -310,17 +301,28 @@ namespace Compiler.CodeAnalysis.Binding
             return new BoundCallExpression(function, boundArguments.ToImmutable());
         }
 
-        private BoundExpression BindConversion(TypeSymbol type, ExpressionSyntax syntax)
+        private BoundExpression BindConversion(ExpressionSyntax syntax, TypeSymbol type)
         {
             var expression = BindExpression(syntax);
+            return BindConversion(syntax.Span, expression, type);
+        }
+
+        private BoundExpression BindConversion(TextSpan diagnosticSpan, BoundExpression expression, TypeSymbol type)
+        {
             var conversion = Conversion.Classify(expression.Type, type);
 
             if (!conversion.Exists)
             {
-                Console.WriteLine(expression.Type.ToString());
-                Console.WriteLine(type.ToString());
-                diagnostics.ReportCannotConvert(syntax.Span, expression.Type, type);
+                if (expression.Type != TypeSymbol.Error && type != TypeSymbol.Error)
+                {
+                    diagnostics.ReportCannotConvert(diagnosticSpan, expression.Type, type);
+                }
                 return new BoundErrorExpression();
+            }
+
+            if (conversion.IsIdentity)
+            {
+                return expression;
             }
 
             return new BoundConversionExpression(type, expression);
