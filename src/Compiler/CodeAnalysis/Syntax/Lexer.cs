@@ -79,6 +79,10 @@ namespace Compiler.CodeAnalysis.Syntax
                     kind = SyntaxKind.CloseBraceToken;
                     position++;
                     break;
+                case ':':
+                    kind = SyntaxKind.ColonToken;
+                    position++;
+                    break;
                 case ',':
                     kind = SyntaxKind.CommaToken;
                     position++;

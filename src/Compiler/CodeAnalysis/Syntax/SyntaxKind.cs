@@ -17,7 +17,6 @@
         CloseParenthesisToken,
         OpenBraceToken,
         CloseBraceToken,
-        IdentifierToken,
         BangToken,
         EqualsEqualsToken,
         BangEqualsToken,
@@ -33,7 +32,9 @@
         AmpersandToken,
         PipeToken,
         HatToken,
+        ColonToken,
         CommaToken,
+        IdentifierToken,
 
         // Keywords
         FalseKeyword,
@@ -49,6 +50,7 @@
         //Nodes
         CompilationUnit,
         ElseClause,
+        TypeClause,
 
         // Statements
         BlockStatement,
