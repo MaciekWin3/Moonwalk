@@ -114,7 +114,7 @@ namespace Compiler.CodeAnalysis.Binding
         {
             if (syntax is null)
             {
-                return TypeSymbol.Error;
+                return null!;
             }
 
             var type = LookupType(syntax.Identifier.Text);
@@ -124,7 +124,7 @@ namespace Compiler.CodeAnalysis.Binding
                 //return TypeSymbol.Error;
             }
 
-            return type;
+            return type!;
         }
 
         private BoundStatement BindIfStatement(IfStatementSyntax syntax)
