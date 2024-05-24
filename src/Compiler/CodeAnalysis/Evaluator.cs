@@ -1,33 +1,27 @@
 ﻿using Compiler.CodeAnalysis.Binding;
 using Compiler.CodeAnalysis.Symbols;
-using System.Collections.Immutable;
 
 namespace Compiler.CodeAnalysis
 {
     internal sealed class Evaluator
     {
-
-        //1:27 Code not working. need to finish episode and then test
-        private readonly ImmutableDictionary<FunctionSymbol, BoundBlockStatement> FunctionBodies;
-        private readonly BoundBlockStatement Root;
-        private readonly Dictionary<VariableSymbol, object> Globals = new();
-        private readonly Stack<Dictionary<VariableSymbol, object>> Locals = new();
+        private readonly BoundProgram program;
+        private readonly Dictionary<VariableSymbol, object> globals = new();
+        private readonly Stack<Dictionary<VariableSymbol, object>> locals = new();
         private Random? random;
 
         private object lastValue = null!;
 
-        public Evaluator(ImmutableDictionary<FunctionSymbol, BoundBlockStatement> functionBodies, BoundBlockStatement root, Dictionary<VariableSymbol, object> globals)
+        public Evaluator(BoundProgram program, Dictionary<VariableSymbol, object> variables)
         {
-            FunctionBodies = functionBodies;
-            Root = root;
-            Globals = globals;
-            Locals.Push(new Dictionary<VariableSymbol, object>());
+            this.program = program;
+            globals = variables;
+            locals.Push(new Dictionary<VariableSymbol, object>());
         }
 
         public object Evaluate()
         {
-            var body = Root;
-            return EvaluateStatement(body);
+            return EvaluateStatement(program.Statement);
         }
 
         private object EvaluateStatement(BoundBlockStatement body)
@@ -116,11 +110,11 @@ namespace Compiler.CodeAnalysis
         {
             if (v.Variable.Kind == SymbolKind.GlobalVariable)
             {
-                return Globals[v.Variable];
+                return globals[v.Variable];
             }
             else
             {
-                var locals = Locals.Peek();
+                var locals = this.locals.Peek();
                 return locals[v.Variable];
             }
         }
@@ -248,10 +242,10 @@ namespace Compiler.CodeAnalysis
                     localsDict.Add(parameter, value);
                 }
 
-                Locals.Push(localsDict);
-                var statement = FunctionBodies[node.Function];
+                locals.Push(localsDict);
+                var statement = program.Functions[node.Function];
                 var result = EvaluateStatement(statement);
-                Locals.Pop();
+                locals.Pop();
                 return result;
             }
         }
@@ -281,11 +275,11 @@ namespace Compiler.CodeAnalysis
         {
             if (variable.Kind == SymbolKind.GlobalVariable)
             {
-                Globals[variable] = value;
+                globals[variable] = value;
             }
             else
             {
-                var locals = Locals.Peek();
+                var locals = this.locals.Peek();
                 locals[variable] = value;
             }
         }
