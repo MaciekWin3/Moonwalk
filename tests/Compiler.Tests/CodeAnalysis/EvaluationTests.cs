@@ -209,7 +209,7 @@ namespace Compiler.Tests.CodeAnalysis
         public void EvaluatorNameExpressionReportsNoErrorForInsertedToken()
         {
             // Arrange
-            var text = @"[]";
+            var text = @"1 + []";
 
             // Act & Assert
             AssertDiagnostics(text, "Unexpected token <EndOfFileToken>, expected <IdentifierToken>.");

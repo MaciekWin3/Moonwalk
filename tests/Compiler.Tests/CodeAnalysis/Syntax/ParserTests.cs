@@ -1,5 +1,6 @@
 ﻿using Compiler.CodeAnalysis.Syntax;
 using Compiler.CodeAnalysis.Syntax.Expressions;
+using FluentAssertions;
 using NUnit.Framework;
 
 namespace Compiler.Tests.CodeAnalysis.Syntax
@@ -121,8 +122,18 @@ namespace Compiler.Tests.CodeAnalysis.Syntax
         {
             var syntaxTree = SyntaxTree.Parse(text);
             var root = syntaxTree.Root;
-            var statement = root.Statement;
-            return ((ExpressionStatementSyntax)statement).Expression;
+            var members = root.Members;
+
+            members.Should().ContainSingle();
+            var member = members.Single();
+
+            member.Should().BeOfType<GlobalStatementSyntax>();
+            var globalStatement = member as GlobalStatementSyntax;
+
+            globalStatement?.Statement.Should().BeOfType<ExpressionStatementSyntax>();
+            var expressionStatement = globalStatement?.Statement as ExpressionStatementSyntax;
+
+            return expressionStatement?.Expression.Should().BeAssignableTo<ExpressionSyntax>().Which!;
         }
 
         private static IEnumerable<object[]> GetBinaryOperatorPairsData()
