@@ -45,10 +45,14 @@
         ElseKeyword,
         WhileKeyword,
         ForKeyword,
+        FunctionKeyword,
         InKeyword,
 
         //Nodes
         CompilationUnit,
+        FunctionDeclaration,
+        GlobalStatement,
+        Parameter,
         ElseClause,
         TypeClause,
 

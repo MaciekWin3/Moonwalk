@@ -1,37 +1,51 @@
 ﻿using Compiler.CodeAnalysis.Binding;
 using Compiler.CodeAnalysis.Symbols;
+using System.Collections.Immutable;
 
 namespace Compiler.CodeAnalysis
 {
     internal sealed class Evaluator
     {
+
+        //1:27 Code not working. need to finish episode and then test
+        private readonly ImmutableDictionary<FunctionSymbol, BoundBlockStatement> FunctionBodies;
         private readonly BoundBlockStatement Root;
-        private readonly Dictionary<VariableSymbol, object> variables = new();
+        private readonly Dictionary<VariableSymbol, object> Globals = new();
+        private readonly Stack<Dictionary<VariableSymbol, object>> Locals = new();
         private Random? random;
 
         private object lastValue = null!;
-        public Evaluator(BoundBlockStatement root, Dictionary<VariableSymbol, object> variables)
+
+        public Evaluator(ImmutableDictionary<FunctionSymbol, BoundBlockStatement> functionBodies, BoundBlockStatement root, Dictionary<VariableSymbol, object> globals)
         {
+            FunctionBodies = functionBodies;
             Root = root;
-            this.variables = variables;
+            Globals = globals;
+            Locals.Push(new Dictionary<VariableSymbol, object>());
         }
 
         public object Evaluate()
         {
+            var body = Root;
+            return EvaluateStatement(body);
+        }
+
+        private object EvaluateStatement(BoundBlockStatement body)
+        {
             var labelToIndex = new Dictionary<BoundLabel, int>();
 
-            for (var i = 0; i < Root.Statements.Length; i++)
+            for (var i = 0; i < body.Statements.Length; i++)
             {
-                if (Root.Statements[i] is BoundLabelStatement l)
+                if (body.Statements[i] is BoundLabelStatement l)
                 {
                     labelToIndex.Add(l.Label, i + 1);
                 }
             }
 
             var index = 0;
-            while (index < Root.Statements.Length)
+            while (index < body.Statements.Length)
             {
-                var s = Root.Statements[index];
+                var s = body.Statements[index];
                 switch (s.Kind)
                 {
                     case BoundNodeKind.VariableDeclaration:
@@ -72,8 +86,8 @@ namespace Compiler.CodeAnalysis
         private void EvaluateVariableDeclaration(BoundVariableDeclaration node)
         {
             var value = EvaluateExpression(node.Initializer);
-            variables[node.Variable] = value;
             lastValue = value;
+            Assign(node.Variable, value);
         }
 
         private void EvaluateExpressionStatement(BoundExpressionStatement node)
@@ -100,13 +114,21 @@ namespace Compiler.CodeAnalysis
 
         private object EvaluateVariableExpression(BoundVariableExpression v)
         {
-            return variables[v.Variable];
+            if (v.Variable.Kind == SymbolKind.GlobalVariable)
+            {
+                return Globals[v.Variable];
+            }
+            else
+            {
+                var locals = Locals.Peek();
+                return locals[v.Variable];
+            }
         }
 
         private object EvaluateAssignmentExpression(BoundAssignmentExpression a)
         {
             var value = EvaluateExpression(a.Expression);
-            variables[a.Variable] = value;
+            Assign(a.Variable, value);
             return value;
         }
 
@@ -217,7 +239,20 @@ namespace Compiler.CodeAnalysis
             }
             else
             {
-                throw new Exception($"Unexpected function {node.Function.Name}");
+                var localsDict = new Dictionary<VariableSymbol, object>();
+                var args = new object[node.Arguments.Length];
+                for (int i = 0; i < node.Arguments.Length; i++)
+                {
+                    var parameter = node.Function.Parameters[i];
+                    var value = EvaluateExpression(node.Arguments[i]);
+                    localsDict.Add(parameter, value);
+                }
+
+                Locals.Push(localsDict);
+                var statement = FunctionBodies[node.Function];
+                var result = EvaluateStatement(statement);
+                Locals.Pop();
+                return result;
             }
         }
 
@@ -239,6 +274,19 @@ namespace Compiler.CodeAnalysis
             else
             {
                 throw new Exception($"Unexpected type {node.Type}");
+            }
+        }
+
+        private void Assign(VariableSymbol variable, object value)
+        {
+            if (variable.Kind == SymbolKind.GlobalVariable)
+            {
+                Globals[variable] = value;
+            }
+            else
+            {
+                var locals = Locals.Peek();
+                locals[variable] = value;
             }
         }
     }

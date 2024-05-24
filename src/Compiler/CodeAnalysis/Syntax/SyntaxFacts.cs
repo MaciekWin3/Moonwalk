@@ -48,6 +48,7 @@
                 "else" => SyntaxKind.ElseKeyword,
                 "while" => SyntaxKind.WhileKeyword,
                 "for" => SyntaxKind.ForKeyword,
+                "func" => SyntaxKind.FunctionKeyword,
                 "in" => SyntaxKind.InKeyword,
                 _ => SyntaxKind.IdentifierToken
             };
@@ -105,15 +106,16 @@
                 SyntaxKind.CommaToken => ",",
                 SyntaxKind.DotToken => ".",
                 SyntaxKind.DotDotToken => "..",
-                SyntaxKind.FalseKeyword => "false",
-                SyntaxKind.TrueKeyword => "true",
-                SyntaxKind.LetKeyword => "let",
-                SyntaxKind.VarKeyword => "var",
-                SyntaxKind.IfKeyword => "if",
                 SyntaxKind.ElseKeyword => "else",
-                SyntaxKind.WhileKeyword => "while",
+                SyntaxKind.FalseKeyword => "false",
                 SyntaxKind.ForKeyword => "for",
+                SyntaxKind.FunctionKeyword => "func",
+                SyntaxKind.TrueKeyword => "true",
+                SyntaxKind.IfKeyword => "if",
+                SyntaxKind.LetKeyword => "let",
                 SyntaxKind.InKeyword => "in",
+                SyntaxKind.WhileKeyword => "while",
+                SyntaxKind.VarKeyword => "var",
                 _ => null!,
             };
     }
