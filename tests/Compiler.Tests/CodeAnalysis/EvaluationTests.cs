@@ -135,7 +135,7 @@ namespace Compiler.Tests.CodeAnalysis
         public void Evaluator_FunctionParameters_NoInfiniteLoop()
         {
             var text = @"
-                function hi(name: string[[[=]]][)]
+                func hi(name: string[[[=]]][)]
                 {
                     print(""Hi "" + name + ""!"" )
                 }[]
