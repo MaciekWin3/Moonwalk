@@ -64,6 +64,12 @@ namespace Compiler.Tests.CodeAnalysis
         [TestCase("!true", false)]
         [TestCase("!false", true)]
         [TestCase("var a = 10", 10)]
+        [TestCase("\"test\"", "test")]
+        [TestCase("\"te\"\"st\"", "te\"st")]
+        [TestCase("\"test\" == \"test\"", true)]
+        [TestCase("\"test\" != \"test\"", false)]
+        [TestCase("\"test\" == \"abc\"", false)]
+        [TestCase("\"test\" != \"abc\"", true)]
         [TestCase("{ var a = 10 a * a}", 100)]
         [TestCase("!false", true)]
         [TestCase("{ var a = 0 (a = 10) * a }", 100)]
@@ -112,6 +118,43 @@ namespace Compiler.Tests.CodeAnalysis
                 Unexpected token <EndOfFileToken>, expected <CloseBraceToken>.";
 
             // Act & Assert
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Test]
+        public void Evaluator_InvokeFunctionArguments_NoInfiniteLoop()
+        {
+            var text = @"
+                print(""Hi""[[=]][)]
+            ";
+
+            var diagnostics = @"
+                Unexpected token <EqualsToken>, expected <CloseParenthesisToken>.
+                Unexpected token <EqualsToken>, expected <IdentifierToken>.
+                Unexpected token <CloseParenthesisToken>, expected <IdentifierToken>.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Test]
+        public void Evaluator_FunctionParameters_NoInfiniteLoop()
+        {
+            var text = @"
+                func hi(name: string[[[=]]][)]
+                {
+                    print(""Hi "" + name + ""!"" )
+                }[]
+            ";
+
+            var diagnostics = @"
+                Unexpected token <EqualsToken>, expected <CloseParenthesisToken>.
+                Unexpected token <EqualsToken>, expected <OpenBraceToken>.
+                Unexpected token <EqualsToken>, expected <IdentifierToken>.
+                Unexpected token <CloseParenthesisToken>, expected <IdentifierToken>.
+                Unexpected token <EndOfFileToken>, expected <CloseBraceToken>.
+            ";
+
             AssertDiagnostics(text, diagnostics);
         }
 

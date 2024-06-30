@@ -221,6 +221,9 @@ namespace Repl
         private void HandleEscape(ObservableCollection<string> document, SubmissionView view)
         {
             document[view.CurrentLine] = string.Empty;
+            document.Clear();
+            document.Add(string.Empty);
+            view.CurrentLine = 0;
             view.CurrentCharacter = 0;
         }
 
