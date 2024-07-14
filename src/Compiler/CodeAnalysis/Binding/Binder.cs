@@ -375,6 +375,7 @@ namespace Compiler.CodeAnalysis.Binding
             if (syntax.Arguments.Count == 1 && LookupType(syntax.Identifier.Text) is TypeSymbol type)
             {
                 return BindConversion(syntax.Arguments[0], type, allowExplicit: false);
+                return BindConversion(syntax.Arguments[0], type, allowExplicit: true);
             }
 
             var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
