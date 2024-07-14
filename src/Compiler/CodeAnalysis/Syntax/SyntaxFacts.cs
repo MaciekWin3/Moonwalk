@@ -40,6 +40,8 @@
         public static SyntaxKind GetKeywordKind(string text) =>
             text switch
             {
+                "break" => SyntaxKind.BreakKeyword,
+                "continue" => SyntaxKind.ContinueKeyword,
                 "true" => SyntaxKind.TrueKeyword,
                 "false" => SyntaxKind.FalseKeyword,
                 "let" => SyntaxKind.LetKeyword,
@@ -106,6 +108,8 @@
                 SyntaxKind.CommaToken => ",",
                 SyntaxKind.DotToken => ".",
                 SyntaxKind.DotDotToken => "..",
+                SyntaxKind.BreakKeyword => "break",
+                SyntaxKind.ContinueKeyword => "continue",
                 SyntaxKind.ElseKeyword => "else",
                 SyntaxKind.FalseKeyword => "false",
                 SyntaxKind.ForKeyword => "for",
