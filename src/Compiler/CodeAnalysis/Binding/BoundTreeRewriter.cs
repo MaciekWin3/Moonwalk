@@ -42,7 +42,7 @@ namespace Compiler.CodeAnalysis.Binding
                 return node;
             }
 
-            return new BoundForStatement(node.Variable, lowerBound, upperBound, body);
+            return new BoundForStatement(node.Variable, lowerBound, upperBound, body, node.BreakLabel, node.ContinueLabel);
         }
 
         protected virtual BoundStatement RewriteWhileStatement(BoundWhileStatement node)
@@ -54,7 +54,7 @@ namespace Compiler.CodeAnalysis.Binding
                 return node;
             }
 
-            return new BoundWhileStatement(condition, body);
+            return new BoundWhileStatement(condition, body, node.BreakLabel, node.ContinueLabel);
         }
 
         protected virtual BoundStatement RewriteIfStatement(BoundIfStatement node)

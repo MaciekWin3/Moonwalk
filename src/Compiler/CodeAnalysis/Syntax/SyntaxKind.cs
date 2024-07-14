@@ -37,6 +37,8 @@
         IdentifierToken,
 
         // Keywords
+        BreakKeyword,
+        ContinueKeyword,
         FalseKeyword,
         LetKeyword,
         TrueKeyword,
@@ -59,10 +61,12 @@
         // Statements
         BlockStatement,
         VariableDeclaration,
-        ExpressionStatement,
         IfStatement,
         WhileStatement,
         ForStatement,
+        BreakStatement,
+        ContinueStatement,
+        ExpressionStatement,
 
         // Expressions
         LiteralExpression,

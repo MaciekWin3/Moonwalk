@@ -166,8 +166,23 @@ namespace Compiler.CodeAnalysis.Syntax
                 SyntaxKind.IfKeyword => ParseIfStatement(),
                 SyntaxKind.WhileKeyword => ParseWhileStatement(),
                 SyntaxKind.ForKeyword => ParseForStatement(),
+                SyntaxKind.BreakKeyword => ParseBreakStatement(),
+                SyntaxKind.ContinueKeyword => ParseContinueStatement(),
                 _ => ParseExpressionStatement(),
             };
+        }
+
+        private StatementSyntax ParseBreakStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.BreakKeyword);
+            return new BreakStatementSyntax(keyword);
+
+        }
+
+        private StatementSyntax ParseContinueStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.ContinueKeyword);
+            return new ContinueStatementSyntax(keyword);
         }
 
         private BlockStatementSyntax ParseBlockStatement()
