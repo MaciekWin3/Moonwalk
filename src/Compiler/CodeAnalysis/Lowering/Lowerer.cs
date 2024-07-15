@@ -106,30 +106,30 @@ namespace Compiler.CodeAnalysis.Lowering
         protected override BoundStatement RewriteWhileStatement(BoundWhileStatement node)
         {
             // while <condition>
-            //      <bode>
+            //      <body>
             //
             // ----->
             //
-            // goto check
-            // continue:
+            // goto continue
+            // body:
             // <body>
-            // check:
-            // gotoTrue <condition> continue
+            // continue:
+            // gotoTrue <condition> body
             // break:
 
-            var checkLabel = GenerateLabel();
+            var bodyLabel = GenerateLabel();
 
-            var gotoCheck = new BoundGotoStatement(checkLabel);
+            var gotoContinue = new BoundGotoStatement(node.ContinueLabel);
+            var bodyLabelStatement = new BoundLabelStatement(bodyLabel);
             var continueLabelStatement = new BoundLabelStatement(node.ContinueLabel);
-            var checkLabelStatement = new BoundLabelStatement(checkLabel);
-            var gotoTrue = new BoundConditionalGotoStatement(node.ContinueLabel, node.Condition);
+            var gotoTrue = new BoundConditionalGotoStatement(bodyLabel, node.Condition);
             var breakLabelStatement = new BoundLabelStatement(node.BreakLabel);
 
             var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
-                gotoCheck,
-                continueLabelStatement,
+                gotoContinue,
+                bodyLabelStatement,
                 node.Body,
-                checkLabelStatement,
+                continueLabelStatement,
                 gotoTrue,
                 breakLabelStatement
             ));
