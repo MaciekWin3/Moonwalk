@@ -10,7 +10,7 @@ namespace Compiler.CodeAnalysis
         private readonly Stack<Dictionary<VariableSymbol, object>> locals = new();
         private Random? random;
 
-        private object lastValue = null!;
+        private object? lastValue = null!;
 
         public Evaluator(BoundProgram program, Dictionary<VariableSymbol, object> variables)
         {
@@ -69,12 +69,16 @@ namespace Compiler.CodeAnalysis
                     case BoundNodeKind.LabelStatement:
                         index++;
                         break;
+                    case BoundNodeKind.ReturnStatement:
+                        var rs = (BoundReturnStatement)s;
+                        lastValue = rs.Expression is null ? null : EvaluateExpression(rs.Expression);
+                        return lastValue!;
                     default:
                         throw new Exception($"Unexpected node {s.Kind}");
                 }
             }
 
-            return lastValue;
+            return lastValue!;
         }
 
         private void EvaluateVariableDeclaration(BoundVariableDeclaration node)

@@ -168,22 +168,12 @@ namespace Compiler.CodeAnalysis.Syntax
                 SyntaxKind.ForKeyword => ParseForStatement(),
                 SyntaxKind.BreakKeyword => ParseBreakStatement(),
                 SyntaxKind.ContinueKeyword => ParseContinueStatement(),
+                SyntaxKind.ReturnKeyword => ParseReturnStatement(),
                 _ => ParseExpressionStatement(),
             };
         }
 
-        private StatementSyntax ParseBreakStatement()
-        {
-            var keyword = MatchToken(SyntaxKind.BreakKeyword);
-            return new BreakStatementSyntax(keyword);
 
-        }
-
-        private StatementSyntax ParseContinueStatement()
-        {
-            var keyword = MatchToken(SyntaxKind.ContinueKeyword);
-            return new ContinueStatementSyntax(keyword);
-        }
 
         private BlockStatementSyntax ParseBlockStatement()
         {
@@ -280,6 +270,29 @@ namespace Compiler.CodeAnalysis.Syntax
             return new ForStatementSyntax(forKeyword, identifier, inKeyword, lowerBound, dotDotToken, upperBound, body);
         }
 
+        private StatementSyntax ParseBreakStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.BreakKeyword);
+            return new BreakStatementSyntax(keyword);
+        }
+
+        private StatementSyntax ParseContinueStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.ContinueKeyword);
+            return new ContinueStatementSyntax(keyword);
+        }
+
+        private StatementSyntax ParseReturnStatement()
+        {
+            var keyword = MatchToken(SyntaxKind.ReturnKeyword);
+            var keywordLine = Text.GetLineIndex(keyword.Span.Start);
+            var currentLine = Text.GetLineIndex(Current.Span.Start);
+            var isEof = Current.Kind == SyntaxKind.EndOfFileToken;
+            var sameLine = !isEof && keywordLine == currentLine;
+            var expression = sameLine ? ParseExpression() : null;
+            return new ReturnStatementSyntax(keyword, expression);
+        }
+
         private ExpressionStatementSyntax ParseExpressionStatement()
         {
             var expression = ParseExpression();
@@ -363,7 +376,6 @@ namespace Compiler.CodeAnalysis.Syntax
             }
         }
 
-
         private ExpressionSyntax ParseParenthesizedExpression()
         {
             var left = MatchToken(SyntaxKind.OpenParenthesisToken);
@@ -390,7 +402,6 @@ namespace Compiler.CodeAnalysis.Syntax
             var stringToken = MatchToken(SyntaxKind.StringToken);
             return new LiteralExpressionSyntax(stringToken);
         }
-
 
         private ExpressionSyntax ParseNameOrCallExpression()
         {

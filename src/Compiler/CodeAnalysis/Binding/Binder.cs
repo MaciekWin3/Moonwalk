@@ -109,12 +109,6 @@ namespace Compiler.CodeAnalysis.Binding
             }
 
             var type = BindTypeClause(syntax.Type) ?? TypeSymbol.Void;
-
-            if (type != TypeSymbol.Void)
-            {
-                diagnostics.XXX_ReportFunctionsAreUnsupported(syntax.Type.Span);
-            }
-
             var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax);
             if (!scope.TryDeclareFunction(function))
             {
@@ -175,12 +169,13 @@ namespace Compiler.CodeAnalysis.Binding
             {
                 SyntaxKind.BlockStatement => BindBlockStatement((BlockStatementSyntax)syntax),
                 SyntaxKind.VariableDeclaration => BindVariableDeclaration((VariableDeclarationSyntax)syntax),
-                SyntaxKind.ExpressionStatement => BindExpressionStatement((ExpressionStatementSyntax)syntax),
                 SyntaxKind.IfStatement => BindIfStatement((IfStatementSyntax)syntax),
                 SyntaxKind.WhileStatement => BindWhileStatement((WhileStatementSyntax)syntax),
                 SyntaxKind.ForStatement => BindForStatement((ForStatementSyntax)syntax),
                 SyntaxKind.BreakStatement => BindBreakStatement((BreakStatementSyntax)syntax),
                 SyntaxKind.ContinueStatement => BindContinueStatement((ContinueStatementSyntax)syntax),
+                SyntaxKind.ReturnStatement => BindReturnStatement((ReturnStatementSyntax)syntax),
+                SyntaxKind.ExpressionStatement => BindExpressionStatement((ExpressionStatementSyntax)syntax),
                 _ => throw new Exception($"Unexpected syntax {syntax.Kind}"),
             };
         }
@@ -292,6 +287,39 @@ namespace Compiler.CodeAnalysis.Binding
 
             var continueLabel = loopStack.Peek().ContinueLabel;
             return new BoundGotoStatement(continueLabel);
+        }
+
+        private BoundStatement BindReturnStatement(ReturnStatementSyntax syntax)
+        {
+            var expression = syntax.Expression is null ? null : BindExpression(syntax.Expression);
+
+            if (Function is null)
+            {
+                diagnostics.ReportInvalidReturn(syntax.ReturnKeyword.Span);
+            }
+            else
+            {
+                if (Function.Type == TypeSymbol.Void)
+                {
+                    if (expression is not null)
+                    {
+                        diagnostics.ReportInvalidReturnExpression(syntax.Expression!.Span, Function.Name);
+                    }
+                }
+                else
+                {
+                    if (expression is null)
+                    {
+                        diagnostics.ReportMissingReturnExpression(syntax.ReturnKeyword.Span, Function.Type);
+                    }
+                    else
+                    {
+                        expression = BindConversion(syntax.Expression!.Span, expression, Function.Type);
+                    }
+                }
+            }
+
+            return new BoundReturnStatement(expression!);
         }
 
         private BoundStatement BindExpressionStatement(ExpressionStatementSyntax syntax)
