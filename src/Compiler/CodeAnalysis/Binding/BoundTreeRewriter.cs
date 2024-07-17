@@ -16,11 +16,11 @@ namespace Compiler.CodeAnalysis.Binding
                 BoundNodeKind.LabelStatement => RewriteLabelStatement((BoundLabelStatement)node),
                 BoundNodeKind.GotoStatement => RewriteGotoStatement((BoundGotoStatement)node),
                 BoundNodeKind.ConditionalGotoStatement => RewriteConditionalGotoStatement((BoundConditionalGotoStatement)node),
+                BoundNodeKind.ReturnStatement => RewriteReturnStatement((BoundReturnStatement)node),
                 BoundNodeKind.ExpressionStatement => RewriteExpressionStatement((BoundExpressionStatement)node),
                 _ => throw new Exception($"Unexpected node: {node.Kind}"),
             };
         }
-
 
         protected virtual BoundStatement RewriteExpressionStatement(BoundExpressionStatement node)
         {
@@ -132,6 +132,17 @@ namespace Compiler.CodeAnalysis.Binding
             }
 
             return new BoundConditionalGotoStatement(node.Label, condition, node.JumpIfTrue);
+        }
+
+        protected virtual BoundReturnStatement RewriteReturnStatement(BoundReturnStatement node)
+        {
+            var expression = node.Expression is null ? null : RewriteExpression(node.Expression);
+            if (expression == node.Expression)
+            {
+                return node;
+            }
+
+            return new BoundReturnStatement(expression!);
         }
 
         public virtual BoundExpression RewriteExpression(BoundExpression node)
