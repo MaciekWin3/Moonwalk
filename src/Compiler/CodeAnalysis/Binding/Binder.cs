@@ -207,7 +207,7 @@ namespace Compiler.CodeAnalysis.Binding
             var type = BindTypeClause(syntax.TypeClause);
             var initializer = BindExpression(syntax.Initializer);
             var variableType = type ?? initializer.Type;
-            var variable = BindVariable(syntax.Identifier, isReadOnly, variableType);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly, variableType);
             var convertedInitializer = BindConversion(syntax.Initializer.Span, initializer, variableType);
             return new BoundVariableDeclaration(variable, convertedInitializer);
         }
@@ -251,7 +251,7 @@ namespace Compiler.CodeAnalysis.Binding
 
             scope = new BoundScope(scope);
 
-            var variable = BindVariable(syntax.Identifier, isReadOnly: true, TypeSymbol.Int);
+            var variable = BindVariableDeclaration(syntax.Identifier, isReadOnly: true, TypeSymbol.Int);
             var body = BindLoopBody(syntax.Body, out var breakLabel, out var continueLabel);
 
             scope = scope.Parent;
@@ -384,9 +384,9 @@ namespace Compiler.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
-            if (!scope.TryLookupVariable(name, out var variable))
+            var variable = BindVariableReference(name, syntax.IdentifierToken.Span);
+            if (variable is null)
             {
-                diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
                 return new BoundErrorExpression();
             }
             return new BoundVariableExpression(variable);
@@ -397,9 +397,9 @@ namespace Compiler.CodeAnalysis.Binding
             var name = syntax.IdentifierToken.Text;
             var boundExpression = BindExpression(syntax.Expression);
 
-            if (!scope.TryLookupVariable(name, out var variable))
+            var variable = BindVariableReference(name, syntax.IdentifierToken.Span);
+            if (variable is null)
             {
-                diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
                 return boundExpression;
             }
 
@@ -464,9 +464,17 @@ namespace Compiler.CodeAnalysis.Binding
                 boundArguments.Add(BindExpression(argument));
             }
 
-            if (!scope.TryLookupFunction(syntax.Identifier.Text, out var function))
+            var symbol = scope.TryLookupSymbol(syntax.Identifier.Text);
+            if (scope is null)
             {
                 diagnostics.ReportUndefinedFunction(syntax.Identifier.Span, syntax.Identifier.Text);
+                return new BoundErrorExpression();
+            }
+
+            var function = symbol as FunctionSymbol;
+            if (function is null)
+            {
+                diagnostics.ReportNotAFunction(syntax.Identifier.Span, syntax.Identifier.Text);
                 return new BoundErrorExpression();
             }
 
@@ -552,7 +560,7 @@ namespace Compiler.CodeAnalysis.Binding
             return new BoundConversionExpression(type, expression);
         }
 
-        private VariableSymbol BindVariable(SyntaxToken identifier, bool isReadOnly, TypeSymbol type)
+        private VariableSymbol BindVariableDeclaration(SyntaxToken identifier, bool isReadOnly, TypeSymbol type)
         {
             var name = identifier.Text ?? "?";
             var declare = !identifier.IsMissing;
@@ -566,6 +574,23 @@ namespace Compiler.CodeAnalysis.Binding
             }
 
             return variable;
+        }
+
+        private VariableSymbol BindVariableReference(string name, TextSpan span)
+        {
+            switch (scope.TryLookupSymbol(name))
+            {
+                case VariableSymbol variable:
+                    return variable;
+
+                case null:
+                    diagnostics.ReportUndefinedVariable(span, name);
+                    return null!;
+
+                default:
+                    diagnostics.ReportNotAVariable(span, name);
+                    return null!;
+            }
         }
 
         private TypeSymbol LookupType(string name)
