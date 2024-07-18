@@ -75,7 +75,7 @@ namespace Compiler.CodeAnalysis
 
         public void ReportUndefinedType(TextSpan span, string name)
         {
-            var message = $"Type'{name}' doesn't exist.";
+            var message = $"Type '{name}' doesn't exist.";
             Report(span, message);
         }
 
@@ -165,7 +165,7 @@ namespace Compiler.CodeAnalysis
 
         public void ReportMissingReturnExpression(TextSpan span, TypeSymbol returnType)
         {
-            var message = $"An expression of type '{returnType}' is expected.";
+            var message = $"An expression of type '{returnType}' expected.";
             Report(span, message);
         }
     }
