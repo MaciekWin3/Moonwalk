@@ -123,7 +123,23 @@ namespace Compiler.Tests.CodeAnalysis
         }
 
         [Test]
-        public void Evaluator_InvokeFunctionArguments_Missing()
+        public void EvaluatorFunctionReturnMissing()
+        {
+            var text = @"
+                func [add](a: int, b: int): int
+                {
+                }
+            ";
+
+            var diagnostics = @"
+                Not all code paths return a value.
+            ";
+
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Test]
+        public void EvaluatorInvokeFunctionArgumentsMissing()
         {
             var text = @"
                 print([)]
@@ -137,7 +153,7 @@ namespace Compiler.Tests.CodeAnalysis
         }
 
         [Test]
-        public void Evaluator_InvokeFunctionArguments_Exceeding()
+        public void EvaluatorInvokeFunctionArgumentsExceeding()
         {
             var text = @"
                 print(""Hello""[, "" "", "" world!""])
@@ -151,7 +167,7 @@ namespace Compiler.Tests.CodeAnalysis
         }
 
         [Test]
-        public void Evaluator_InvokeFunctionArguments_NoInfiniteLoop()
+        public void EvaluatorInvokeFunctionArgumentsNoInfiniteLoop()
         {
             var text = @"
                 print(""Hi""[[=]][)]
@@ -167,7 +183,7 @@ namespace Compiler.Tests.CodeAnalysis
         }
 
         [Test]
-        public void Evaluator_FunctionParameters_NoInfiniteLoop()
+        public void EvaluatorFunctionParametersNoInfiniteLoop()
         {
             var text = @"
                 func hi(name: string[[[=]]][)]
