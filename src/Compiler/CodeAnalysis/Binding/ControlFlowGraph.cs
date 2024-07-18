@@ -1,5 +1,6 @@
 ﻿using Compiler.CodeAnalysis.Symbols;
 using Compiler.CodeAnalysis.Syntax;
+using System.CodeDom.Compiler;
 
 namespace Compiler.CodeAnalysis.Binding
 {
@@ -49,9 +50,10 @@ namespace Compiler.CodeAnalysis.Binding
                 }
 
                 using var writer = new StringWriter();
+                using var indentedWriter = new IndentedTextWriter(writer);
                 foreach (var statement in Statements)
                 {
-                    statement.WriteTo(writer);
+                    statement.WriteTo(indentedWriter);
                 }
 
                 return writer.ToString();
@@ -184,7 +186,7 @@ namespace Compiler.CodeAnalysis.Binding
                                 var cgs = (BoundConditionalGotoStatement)statement;
                                 var thenBlock = _blockFromLabel[cgs.Label];
                                 var elseBlock = next;
-                                var negatedCondition = Negate(cgs.Condition); ;
+                                var negatedCondition = Negate(cgs.Condition);
                                 var thenCondition = cgs.JumpIfTrue ? cgs.Condition : negatedCondition;
                                 var elseCondition = cgs.JumpIfTrue ? negatedCondition : cgs.Condition;
                                 Connect(current, thenBlock, thenCondition);
@@ -276,7 +278,7 @@ namespace Compiler.CodeAnalysis.Binding
         {
             string Quote(string text)
             {
-                return "\"" + text.Replace("\"", "\\\"") + "\"";
+                return "\"" + text.TrimEnd().Replace("\\", "\\\\").Replace("\"", "\\\"").Replace(Environment.NewLine, "\\l") + "\"";
             }
 
             writer.WriteLine("digraph G {");
@@ -292,8 +294,8 @@ namespace Compiler.CodeAnalysis.Binding
             foreach (var block in Blocks)
             {
                 var id = blockIds[block];
-                var label = Quote(block.ToString().Replace(Environment.NewLine, "\\l"));
-                writer.WriteLine($"    {id} [label = {label} shape = box]");
+                var label = Quote(block.ToString());
+                writer.WriteLine($"    {id} [label = {label}, shape = box]");
             }
 
             foreach (var branch in Branches)
