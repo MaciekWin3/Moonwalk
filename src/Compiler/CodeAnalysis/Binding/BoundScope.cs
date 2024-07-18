@@ -31,30 +31,15 @@ namespace Compiler.CodeAnalysis.Binding
             return true;
         }
 
-        public bool TryLookupVariable(string name, out VariableSymbol variable) => TryLookupSymbol(name, out variable);
-        public bool TryLookupFunction(string name, out FunctionSymbol function) => TryLookupSymbol(name, out function);
-
-        private bool TryLookupSymbol<TSymbol>(string name, out TSymbol symbol) where TSymbol : Symbol
+        public Symbol TryLookupSymbol(string name)
         {
-            symbol = null!;
-            if (symbols is not null && symbols.TryGetValue(name, out var declaredSymbol))
+            if (symbols is not null && symbols.TryGetValue(name, out var symbol))
             {
-                if (declaredSymbol is TSymbol matchingSymbol)
-                {
-                    symbol = matchingSymbol;
-                    return true;
-                }
-                return false;
+                return symbol;
             }
 
-            if (Parent is null)
-            {
-                return false;
-            }
-
-            return Parent.TryLookupSymbol(name, out symbol);
+            return Parent?.TryLookupSymbol(name)!;
         }
-
 
         public ImmutableArray<VariableSymbol> GetDeclaredVariables() => GetDeclaredSymbols<VariableSymbol>();
         public ImmutableArray<FunctionSymbol> GetDeclaredFunctions() => GetDeclaredSymbols<FunctionSymbol>();

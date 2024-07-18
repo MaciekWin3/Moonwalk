@@ -337,10 +337,22 @@ namespace Compiler.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                Function 'print' doesn't exists.
+                'print' is not a function.
             ";
 
             // Act & Assert
+            AssertDiagnostics(text, diagnostics);
+        }
+
+        [Test]
+        public void Evaluator_AssignmentExpression_Reports_NotAVariable()
+        {
+            var text = @"[print] = 42";
+
+            var diagnostics = @"
+                'print' is not a variable.
+            ";
+
             AssertDiagnostics(text, diagnostics);
         }
 
