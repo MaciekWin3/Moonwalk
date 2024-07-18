@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{2141AD30
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core", "src\Compiler\Core.csproj", "{1C5BB0EE-55E6-4809-85F5-1021760E8473}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Compiler.Tests", "tests\Compiler.Tests\Compiler.Tests.csproj", "{224CF082-9EB3-46A5-93F5-BB90F5AAACD5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Core.Tests", "tests\Compiler.Tests\Core.Tests.csproj", "{224CF082-9EB3-46A5-93F5-BB90F5AAACD5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Repl", "src\Repl\Repl.csproj", "{C4E2F21B-2308-48A1-904F-7FBC4DAF7400}"
 EndProject
