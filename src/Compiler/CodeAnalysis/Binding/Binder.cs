@@ -114,7 +114,8 @@ namespace Compiler.CodeAnalysis.Binding
 
             var type = BindTypeClause(syntax.Type) ?? TypeSymbol.Void;
             var function = new FunctionSymbol(syntax.Identifier.Text, parameters.ToImmutable(), type, syntax);
-            if (!scope.TryDeclareFunction(function))
+            if (function.Declaration.Identifier.Text is not null &&
+                !scope.TryDeclareFunction(function))
             {
                 diagnostics.ReportSymbolAlreadyDeclared(syntax.Identifier.Span, function.Name);
             }
