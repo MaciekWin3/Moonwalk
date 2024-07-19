@@ -1,5 +1,6 @@
 ﻿using Core.CodeAnalysis;
 using Core.CodeAnalysis.Syntax;
+using Core.IO;
 
 namespace Compiler
 {
@@ -25,8 +26,19 @@ namespace Compiler
 
             var syntaxTree = SyntaxTree.Parse(text);
             var compilation = new Compilation(syntaxTree);
-            compilation.Evaluate([]);
+            var result = compilation.Evaluate([]);
 
+            if (!result.Diagnostics.Any())
+            {
+                if (result.Value is not null)
+                {
+                    Console.WriteLine(result.Value);
+                }
+            }
+            else
+            {
+                Console.Error.WriteDiagnostics(result.Diagnostics, syntaxTree);
+            }
         }
     }
 }
