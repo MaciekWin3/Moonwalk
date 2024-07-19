@@ -1,8 +1,8 @@
-﻿using Compiler.CodeAnalysis.Text;
+﻿using Core.CodeAnalysis.Text;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compiler.Tests.CodeAnalysis.Text
+namespace Core.Tests.CodeAnalysis.Text
 {
     public class SourceTextTests
     {

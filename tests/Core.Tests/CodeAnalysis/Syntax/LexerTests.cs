@@ -1,9 +1,9 @@
-﻿using Compiler.CodeAnalysis.Syntax;
-using Compiler.CodeAnalysis.Text;
+﻿using Core.CodeAnalysis.Syntax;
+using Core.CodeAnalysis.Text;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compiler.Tests.CodeAnalysis.Syntax
+namespace Core.Tests.CodeAnalysis.Syntax
 {
     [TestFixture]
     public class LexerTests
