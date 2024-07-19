@@ -1,4 +1,4 @@
-﻿using Compiler.CodeAnalysis.Syntax;
+﻿using Core.CodeAnalysis.Syntax;
 using FluentAssertions;
 using NUnit.Framework;
 
