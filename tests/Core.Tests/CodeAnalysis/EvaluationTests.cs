@@ -1,10 +1,10 @@
-﻿using Compiler.CodeAnalysis;
-using Compiler.CodeAnalysis.Symbols;
-using Compiler.CodeAnalysis.Syntax;
+﻿using Core.CodeAnalysis;
+using Core.CodeAnalysis.Symbols;
+using Core.CodeAnalysis.Syntax;
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compiler.Tests.CodeAnalysis
+namespace Core.Tests.CodeAnalysis
 {
     [TestFixture]
     public class EvaluationTests

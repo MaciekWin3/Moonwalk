@@ -1,7 +1,7 @@
-﻿using Compiler.CodeAnalysis.Syntax;
+﻿using Core.CodeAnalysis.Syntax;
 using NUnit.Framework;
 
-namespace Compiler.Tests.CodeAnalysis.Syntax
+namespace Core.Tests.CodeAnalysis.Syntax
 {
     internal sealed class AssertingEnumerator : IDisposable
     {

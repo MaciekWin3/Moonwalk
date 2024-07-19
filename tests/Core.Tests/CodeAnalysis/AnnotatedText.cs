@@ -1,8 +1,8 @@
-﻿using Compiler.CodeAnalysis.Text;
+﻿using Core.CodeAnalysis.Text;
 using System.Collections.Immutable;
 using System.Text;
 
-namespace Compiler.Tests.CodeAnalysis
+namespace Core.Tests.CodeAnalysis
 {
     internal sealed class AnnotatedText
     {

@@ -2,7 +2,7 @@
 using FluentAssertions;
 using NUnit.Framework;
 
-namespace Compiler.Tests.CodeAnalysis.Syntax
+namespace Core.Tests.CodeAnalysis.Syntax
 {
     [TestFixture]
     public class SyntaxFactsTests
