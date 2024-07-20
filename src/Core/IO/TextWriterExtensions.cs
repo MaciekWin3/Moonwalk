@@ -7,7 +7,6 @@ namespace Core.IO
 {
     public static class TextWriterExtensions
     {
-        //o1:47:27
         private static bool IsConsoleOut(this TextWriter writer)
         {
             if (writer == Console.Out)
