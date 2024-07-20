@@ -1,3 +1,0 @@
-print("What is your name?")
-let name: string = input()
-print("Hello " + name + "!")
