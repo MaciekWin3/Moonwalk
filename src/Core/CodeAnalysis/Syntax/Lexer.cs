@@ -1,5 +1,4 @@
-﻿using Core.CodeAnalysis;
-using Core.CodeAnalysis.Symbols;
+﻿using Core.CodeAnalysis.Symbols;
 using Core.CodeAnalysis.Text;
 using System.Text;
 
@@ -9,19 +8,22 @@ namespace Core.CodeAnalysis.Syntax
     {
         private readonly SourceText text;
         private readonly DiagnosticBag diagnostics = new();
+        private readonly SyntaxTree syntaxTree;
         private int position;
         private int start;
         private SyntaxKind kind;
         private object? value;
         public DiagnosticBag Diagnostics => diagnostics;
 
-        public Lexer(SourceText text)
+        public Lexer(SyntaxTree syntaxTree)
         {
-            this.text = text;
+            text = syntaxTree.Text;
+            this.syntaxTree = syntaxTree;
         }
 
         private char Current => Peek(0);
         private char Lookahead => Peek(1);
+
         private char Peek(int offset)
         {
             var index = position + offset;
@@ -194,7 +196,7 @@ namespace Core.CodeAnalysis.Syntax
                 case '7':
                 case '8':
                 case '9':
-                    ReadNumberToken();
+                    ReadNumber();
                     break;
                 case ' ':
                 case '\t':
@@ -213,7 +215,9 @@ namespace Core.CodeAnalysis.Syntax
                     }
                     else
                     {
-                        diagnostics.ReportBadCharacter(position, Current);
+                        var span = new TextSpan(position, 1);
+                        var location = new TextLocation(this.text, span);
+                        diagnostics.ReportBadCharacter(location, Current);
                         position++;
                     }
                     break;
@@ -226,7 +230,7 @@ namespace Core.CodeAnalysis.Syntax
                 text = this.text.ToString(start, length);
             }
 
-            return new SyntaxToken(kind, start, text, value);
+            return new SyntaxToken(syntaxTree, kind, start, text, value);
         }
 
         private void ReadString()
@@ -245,7 +249,8 @@ namespace Core.CodeAnalysis.Syntax
                     case '\r':
                     case '\n':
                         var span = new TextSpan(start, 1);
-                        diagnostics.ReportUnterminatedString(span);
+                        var location = new TextLocation(this.text, span);
+                        diagnostics.ReportUnterminatedString(location);
                         done = true;
                         break;
                     case '"':
@@ -271,17 +276,19 @@ namespace Core.CodeAnalysis.Syntax
             value = sb.ToString();
         }
 
-        private void ReadNumberToken()
+        private void ReadNumber()
         {
             while (char.IsDigit(Current))
             {
-                Next();
+                position++;
             }
-            int length = position - start;
-            string tokenText = text.ToString(start, length);
-            if (!int.TryParse(tokenText, out int value))
+            var length = position - start;
+            var text = this.text.ToString(start, length);
+            if (!int.TryParse(text, out var value))
             {
-                diagnostics.ReportInvalidNumber(new TextSpan(start, length), tokenText, TypeSymbol.Int);
+                var span = new TextSpan(start, length);
+                var location = new TextLocation(this.text, span);
+                diagnostics.ReportInvalidNumber(location, text, TypeSymbol.Int);
             }
 
             this.value = value;

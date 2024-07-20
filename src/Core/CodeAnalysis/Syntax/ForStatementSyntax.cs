@@ -4,9 +4,9 @@ namespace Core.CodeAnalysis.Syntax
 {
     public sealed class ForStatementSyntax : StatementSyntax
     {
-        public ForStatementSyntax(SyntaxToken forKeyword, SyntaxToken identifier, SyntaxToken inKeyword,
+        public ForStatementSyntax(SyntaxTree syntaxTree, SyntaxToken forKeyword, SyntaxToken identifier, SyntaxToken inKeyword,
                                   ExpressionSyntax lowerBound, SyntaxToken dotDotToken, ExpressionSyntax upperBound,
-                                  StatementSyntax body)
+                                  StatementSyntax body) : base(syntaxTree)
         {
             ForKeyword = forKeyword;
             Identifier = identifier;

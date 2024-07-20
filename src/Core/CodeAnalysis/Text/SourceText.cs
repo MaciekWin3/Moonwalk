@@ -8,9 +8,12 @@ namespace Core.CodeAnalysis.Text
         public char this[int index] => Text[index];
         public int Length => Text.Length;
         private readonly string Text;
-        private SourceText(string text)
+        public string FileName { get; }
+
+        private SourceText(string text, string fileName)
         {
             Text = text;
+            FileName = fileName;
             Lines = ParseLine(this, text);
         }
 
@@ -100,11 +103,10 @@ namespace Core.CodeAnalysis.Text
             return 0;
         }
 
-        public static SourceText From(string text)
+        public static SourceText From(string text, string fileName = "")
         {
-            return new SourceText(text);
+            return new SourceText(text, fileName);
         }
-
         public override string ToString() => Text;
         public string ToString(int start, int length) => Text.Substring(start, length);
         public string ToString(TextSpan span) => ToString(span.Start, span.Length);

@@ -8,7 +8,8 @@
 
         public override SyntaxKind Kind => SyntaxKind.AssignmentExpression;
 
-        public AssignmentExpressionSyntax(SyntaxToken identifierToken, SyntaxToken equalsToken, ExpressionSyntax expression)
+        public AssignmentExpressionSyntax(SyntaxTree syntaxTree, SyntaxToken identifierToken, SyntaxToken equalsToken, ExpressionSyntax expression)
+            : base(syntaxTree)
         {
             IdentifierToken = identifierToken;
             EqualsToken = equalsToken;

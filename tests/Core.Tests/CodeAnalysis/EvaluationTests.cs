@@ -388,7 +388,7 @@ namespace Core.Tests.CodeAnalysis
             ";
 
             var diagnostics = @"
-                An expression of type 'int' expected.
+                An expression of type 'int' is expected.
             ";
 
             AssertDiagnostics(text, diagnostics);
@@ -573,7 +573,7 @@ namespace Core.Tests.CodeAnalysis
                 expectedMessage.Should().Be(actualMessage);
 
                 var expectedSpan = annotatedText.Spans[i];
-                var actualSpan = result.Diagnostics[i].Span;
+                var actualSpan = result.Diagnostics[i].Location.Span;
                 expectedSpan.Should().Be(actualSpan);
             }
         }
