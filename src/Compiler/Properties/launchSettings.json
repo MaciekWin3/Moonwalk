@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Compiler": {
+      "commandName": "Project",
+      "commandLineArgs": "D:\\Repo\\dotnet\\Moonwalk\\samples\\hello\\hello.mw"
+    }
+  }
+}

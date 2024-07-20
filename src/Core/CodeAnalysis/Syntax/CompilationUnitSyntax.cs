@@ -4,7 +4,9 @@ namespace Core.CodeAnalysis.Syntax
 {
     public sealed class CompilationUnitSyntax : SyntaxNode
     {
-        public CompilationUnitSyntax(ImmutableArray<MemberSyntax> members, SyntaxToken endOfFileToken)
+        // 1:18:21
+        public CompilationUnitSyntax(SyntaxTree syntaxTree, ImmutableArray<MemberSyntax> members, SyntaxToken endOfFileToken)
+            : base(syntaxTree)
         {
             Members = members;
             EndOfFileToken = endOfFileToken;

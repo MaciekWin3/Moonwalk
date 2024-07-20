@@ -4,14 +4,14 @@ namespace Core.CodeAnalysis
 {
     public sealed class Diagnostic
     {
-        public TextSpan Span { get; }
-        public string Message { get; }
-
-        public Diagnostic(TextSpan span, string message)
+        public Diagnostic(TextLocation location, string message)
         {
-            Span = span;
+            Location = location;
             Message = message;
         }
+
+        public TextLocation Location { get; }
+        public string Message { get; }
         public override string ToString() => Message;
     }
 }

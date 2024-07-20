@@ -22,9 +22,14 @@ namespace Compiler
 
             var path = args.Single();
 
-            var text = File.ReadAllText(path);
+            if (!File.Exists(path))
+            {
+                Console.WriteLine($"error: file '{path}' doesn't exist");
+                return;
+            }
 
-            var syntaxTree = SyntaxTree.Parse(text);
+            var syntaxTree = SyntaxTree.Load(path);
+
             var compilation = new Compilation(syntaxTree);
             var result = compilation.Evaluate([]);
 
@@ -37,7 +42,7 @@ namespace Compiler
             }
             else
             {
-                Console.Error.WriteDiagnostics(result.Diagnostics, syntaxTree);
+                Console.Error.WriteDiagnostics(result.Diagnostics);
             }
         }
     }

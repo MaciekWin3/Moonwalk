@@ -23,7 +23,7 @@ namespace Core.Tests.CodeAnalysis.Syntax
             token.Text.Should().Be("\"text");
 
             var diagnostic = diagnostics.Should().ContainSingle().Which;
-            diagnostic.Span.Should().Be(new TextSpan(0, 1));
+            diagnostic.Location.Span.Should().Be(new TextSpan(0, 1));
             diagnostic.Message.Should().Be("Unterminated string literal.");
 
         }
