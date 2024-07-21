@@ -47,8 +47,7 @@ namespace Core.CodeAnalysis.Symbols
                 symbol.Parameters[i].WriteTo(writer);
             }
 
-            writer.WritePunctuation(")");
-            writer.WriteLine();
+            writer.WritePunctuation(SyntaxKind.CloseParenthesisToken);
         }
 
         private static void WriteGlobalVariableTo(GlobalVariableSymbol symbol, TextWriter writer)

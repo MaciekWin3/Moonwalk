@@ -10,7 +10,7 @@ namespace Core.CodeAnalysis
         private BoundGlobalScope? globalScope;
 
         public Compilation(params SyntaxTree[] syntaxTrees)
-            : this(null, syntaxTrees)
+            : this(null!, syntaxTrees)
         { }
 
         private Compilation(Compilation previous, params SyntaxTree[] syntaxTrees)
@@ -89,6 +89,7 @@ namespace Core.CodeAnalysis
                         continue;
 
                     functionBody.Key.WriteTo(writer);
+                    writer.WriteLine();
                     functionBody.Value.WriteTo(writer);
                 }
             }
