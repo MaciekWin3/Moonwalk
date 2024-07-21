@@ -1,14 +1,42 @@
 ﻿using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Reflection;
+using System.Text;
 
 namespace Repl
 {
     internal abstract class Repl
     {
+        private readonly List<MetaCommand> _metaCommands = new List<MetaCommand>();
         private readonly List<string> submissionHistory = new();
         private int submissionHistoryIndex;
 
         private bool done;
+
+        protected Repl()
+        {
+            InitializeMetaCommands();
+        }
+
+        private void InitializeMetaCommands()
+        {
+            var methods = GetType().GetMethods(BindingFlags.Public |
+                                               BindingFlags.NonPublic |
+                                               BindingFlags.Static |
+                                               BindingFlags.Instance |
+                                               BindingFlags.FlattenHierarchy);
+            foreach (var method in methods)
+            {
+                var attribute = method.GetCustomAttribute(typeof(MetaCommandAttribute)) as MetaCommandAttribute;
+                if (attribute is null)
+                {
+                    continue;
+                }
+
+                var metaCommand = new MetaCommand(attribute.Name, attribute.Description, method);
+                _metaCommands.Add(metaCommand);
+            }
+        }
 
         public void Run()
         {
@@ -417,15 +445,137 @@ namespace Repl
             Console.Write(line);
         }
 
-        protected virtual void EvaluateMetaCommand(string input)
+        private void EvaluateMetaCommand(string input)
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine($"Invalid command {input}.");
-            Console.ResetColor();
+            // Parse arguments
+
+            var args = new List<string>();
+            var inQuotes = false;
+            var position = 1;
+            var sb = new StringBuilder();
+            while (position < input.Length)
+            {
+                var c = input[position];
+                var l = position + 1 >= input.Length ? '\0' : input[position + 1];
+
+                if (char.IsWhiteSpace(c))
+                {
+                    if (!inQuotes)
+                    {
+                        CommitPendingArgument();
+                    }
+                    else
+                    {
+                        sb.Append(c);
+                    }
+                }
+                else if (c == '\"')
+                {
+                    if (!inQuotes)
+                    {
+                        inQuotes = true;
+                    }
+                    else if (l == '\"')
+                    {
+                        sb.Append(c);
+                        position++;
+                    }
+                    else
+                    {
+                        inQuotes = false;
+                    }
+                }
+                else
+                {
+                    sb.Append(c);
+                }
+
+                position++;
+            }
+
+            CommitPendingArgument();
+
+            void CommitPendingArgument()
+            {
+                var arg = sb.ToString();
+                if (!string.IsNullOrWhiteSpace(arg))
+                {
+                    args.Add(arg);
+                }
+                sb.Clear();
+            }
+
+            var commandName = args.FirstOrDefault();
+            if (args.Count > 0)
+            {
+                args.RemoveAt(0);
+            }
+
+            var command = _metaCommands.SingleOrDefault(mc => mc.Name == commandName);
+            if (command is null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"Invalid command {input}.");
+                Console.ResetColor();
+                return;
+            }
+
+            var parameters = command.Method.GetParameters();
+
+            if (args.Count != parameters.Length)
+            {
+                var parameterNames = string.Join(", ", parameters.Select(p => $"<{p.Name}>"));
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"error: invalid number of arguments");
+                Console.WriteLine($"usage: #{command.Name} {parameterNames}");
+                Console.ResetColor();
+                return;
+            }
+
+            command.Method.Invoke(this, args.ToArray());
         }
 
         protected abstract bool IsCompleteSubmission(string text);
 
         protected abstract void EvaluateSubmission(string text);
+
+        [AttributeUsage(AttributeTargets.Method, AllowMultiple = false)]
+        protected sealed class MetaCommandAttribute : Attribute
+        {
+            public MetaCommandAttribute(string name, string description)
+            {
+                Name = name;
+                Description = description;
+            }
+
+            public string Name { get; }
+            public string Description { get; }
+        }
+
+        private sealed class MetaCommand
+        {
+            public MetaCommand(string name, string description, MethodInfo method)
+            {
+                Name = name;
+                Description = description;
+                Method = method;
+            }
+
+            public string Name { get; }
+            public string Description { get; }
+            public MethodInfo Method { get; }
+        }
+
+        [MetaCommand("help", "Shows help")]
+        protected void EvaluateHelp()
+        {
+            var maxNameLength = _metaCommands.Max(mc => mc.Name.Length);
+
+            foreach (var metaCommand in _metaCommands.OrderBy(mc => mc.Name))
+            {
+                var paddedName = metaCommand.Name.PadRight(maxNameLength);
+                Console.WriteLine($"#{paddedName}  {metaCommand.Description}");
+            }
+        }
     }
 }
