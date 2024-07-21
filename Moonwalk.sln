@@ -37,7 +37,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "samples", "samples", "{F8D6
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "hello", "hello", "{17E8B953-47AC-49AF-AFEE-A60840E56E11}"
 	ProjectSection(SolutionItems) = preProject
-		samples\hello\hello.mw = samples\hello\hello.mw
+		samples\hello\getName.mw = samples\hello\getName.mw
+		samples\hello\helloworld.mw = samples\hello\helloworld.mw
 	EndProjectSection
 EndProject
 Global

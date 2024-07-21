@@ -7,14 +7,20 @@ namespace Core.IO
 {
     public static class TextWriterExtensions
     {
-        private static bool IsConsoleOut(this TextWriter writer)
+        private static bool IsConsole(this TextWriter writer)
         {
             if (writer == Console.Out)
             {
-                return true;
+                return !Console.IsOutputRedirected;
             }
 
-            if (writer is IndentedTextWriter iw && iw.InnerWriter.IsConsoleOut())
+
+            if (writer == Console.Error)
+            {
+                return !Console.IsErrorRedirected && !Console.IsOutputRedirected; // Color codes are always output to Console.Out
+            }
+
+            if (writer is IndentedTextWriter iw && iw.InnerWriter.IsConsole())
             {
                 return true;
             }
@@ -23,7 +29,7 @@ namespace Core.IO
 
         private static void SetForeground(this TextWriter writer, ConsoleColor color)
         {
-            if (writer == Console.Out)
+            if (writer.IsConsole())
             {
                 Console.ForegroundColor = color;
             }
@@ -31,7 +37,7 @@ namespace Core.IO
 
         private static void ResetColor(this TextWriter writer)
         {
-            if (writer == Console.Out)
+            if (writer.IsConsole())
             {
                 Console.ResetColor();
             }
@@ -103,13 +109,12 @@ namespace Core.IO
                 var span = diagnostic.Location.Span;
                 var lineIndex = text.GetLineIndex(span.Start);
                 var line = text.Lines[lineIndex];
+                writer.WriteLine();
 
-                Console.WriteLine();
-
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.Write($"{fileName}({startLine},{startCharacter},{endLine},{endCharacter}): ");
-                Console.WriteLine(diagnostic);
-                Console.ResetColor();
+                writer.SetForeground(ConsoleColor.DarkRed);
+                writer.Write($"{fileName}({startLine},{startCharacter},{endLine},{endCharacter}): ");
+                writer.WriteLine(diagnostic);
+                writer.ResetColor();
 
                 var prefixSpan = TextSpan.FromBounds(line.Start, span.Start);
                 var suffixSpan = TextSpan.FromBounds(span.End, line.End);
@@ -118,15 +123,19 @@ namespace Core.IO
                 var error = text.ToString(span);
                 var suffix = text.ToString(suffixSpan);
 
-                Console.Write("    ");
-                Console.Write(prefix);
-                Console.ForegroundColor = ConsoleColor.DarkRed;
-                Console.Write(error);
-                Console.ResetColor();
-                Console.Write(suffix);
-                Console.WriteLine();
+                writer.Write("    ");
+                writer.Write(prefix);
+
+                writer.SetForeground(ConsoleColor.DarkRed);
+                writer.Write(error);
+                writer.ResetColor();
+
+                writer.Write(suffix);
+
+                writer.WriteLine();
             }
-            Console.WriteLine();
+
+            writer.WriteLine();
         }
     }
 }
