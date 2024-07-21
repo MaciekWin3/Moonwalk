@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using Core.IO;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Reflection;
 using System.Text;
@@ -574,7 +575,14 @@ namespace Repl
             foreach (var metaCommand in _metaCommands.OrderBy(mc => mc.Name))
             {
                 var paddedName = metaCommand.Name.PadRight(maxNameLength);
-                Console.WriteLine($"#{paddedName}  {metaCommand.Description}");
+
+                Console.Out.WritePunctuation("#");
+                Console.Out.WriteIdentifier(paddedName);
+                Console.Out.WriteSpace();
+                Console.Out.WriteSpace();
+                Console.Out.WriteSpace();
+                Console.Out.WritePunctuation(metaCommand.Description);
+                Console.Out.WriteLine();
             }
         }
     }
