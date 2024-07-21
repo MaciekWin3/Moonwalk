@@ -5,7 +5,7 @@ namespace Repl
 {
     internal abstract class Repl
     {
-        private List<string> submissionHistory = new();
+        private readonly List<string> submissionHistory = new();
         private int submissionHistoryIndex;
 
         private bool done;
