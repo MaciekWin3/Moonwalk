@@ -10,7 +10,7 @@ namespace Repl
         private Compilation? previous;
         private bool showTree;
         private bool showProgram;
-        private readonly Dictionary<VariableSymbol, object> _variables = new();
+        private readonly Dictionary<VariableSymbol, object> variables = new();
 
         protected override void RenderLine(string line)
         {
@@ -56,22 +56,22 @@ namespace Repl
         [MetaCommand("reset", "Clears all previous submissions")]
         private void EvaluateReset()
         {
-            _previous = null;
-            _variables.Clear();
+            previous = null;
+            variables.Clear();
         }
 
         [MetaCommand("showTree", "Shows the parse tree")]
         private void EvaluateShowTree()
         {
-            _showTree = !_showTree;
-            Console.WriteLine(_showTree ? "Showing parse trees." : "Not showing parse trees.");
+            showTree = !showTree;
+            Console.WriteLine(showTree ? "Showing parse trees." : "Not showing parse trees.");
         }
 
         [MetaCommand("showProgram", "Shows the bound tree")]
         private void EvaluateShowProgram()
         {
-            _showProgram = !_showProgram;
-            Console.WriteLine(_showProgram ? "Showing bound tree." : "Not showing bound tree.");
+            showProgram = !showProgram;
+            Console.WriteLine(showProgram ? "Showing bound tree." : "Not showing bound tree.");
         }
 
         protected override bool IsCompleteSubmission(string text)
@@ -117,7 +117,7 @@ namespace Repl
                 compilation.EmitTree(Console.Out);
             }
 
-            var result = compilation.Evaluate(_variables);
+            var result = compilation.Evaluate(variables);
 
             if (!result.Diagnostics.Any())
             {
