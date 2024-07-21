@@ -114,6 +114,26 @@ namespace Repl
             }
         }
 
+        [MetaCommand("dump", "Shows bound tree of a given function")]
+        private void EvaluateDump(string functionName)
+        {
+            if (previous is null)
+            {
+                return;
+            }
+
+            var symbol = previous.GetSymbols().OfType<FunctionSymbol>().SingleOrDefault(f => f.Name == functionName);
+            if (symbol is null)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine($"error: function '{functionName}' does not exist");
+                Console.ResetColor();
+                return;
+            }
+
+            previous.EmitTree(symbol, Console.Out);
+        }
+
         protected override bool IsCompleteSubmission(string text)
         {
             if (string.IsNullOrEmpty(text))
