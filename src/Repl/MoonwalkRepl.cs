@@ -8,6 +8,7 @@ namespace Repl
     internal sealed class MoonwalkRepl : Repl
     {
         private static bool loadingSubmission;
+        private static readonly Compilation emptyCompilation = new Compilation();
         private Compilation? previous;
         private bool showTree;
         private bool showProgram;
@@ -101,12 +102,8 @@ namespace Repl
         [MetaCommand("ls", "Lists all symbols")]
         private void EvaluateLs()
         {
-            if (previous is null)
-            {
-                return;
-            }
-
-            var symbols = previous.GetSymbols().OrderBy(s => s.Kind).ThenBy(s => s.Name);
+            var compilation = previous ?? emptyCompilation;
+            var symbols = compilation.GetSymbols().OrderBy(s => s.Kind).ThenBy(s => s.Name);
             foreach (var symbol in symbols)
             {
                 symbol.WriteTo(Console.Out);
@@ -117,12 +114,8 @@ namespace Repl
         [MetaCommand("dump", "Shows bound tree of a given function")]
         private void EvaluateDump(string functionName)
         {
-            if (previous is null)
-            {
-                return;
-            }
-
-            var symbol = previous.GetSymbols().OfType<FunctionSymbol>().SingleOrDefault(f => f.Name == functionName);
+            var compilation = previous ?? emptyCompilation;
+            var symbol = compilation.GetSymbols().OfType<FunctionSymbol>().SingleOrDefault(f => f.Name == functionName);
             if (symbol is null)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -131,7 +124,7 @@ namespace Repl
                 return;
             }
 
-            previous.EmitTree(symbol, Console.Out);
+            compilation.EmitTree(symbol, Console.Out);
         }
 
         protected override bool IsCompleteSubmission(string text)

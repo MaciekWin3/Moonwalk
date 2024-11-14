@@ -28,7 +28,7 @@ namespace Repl
                                                BindingFlags.FlattenHierarchy);
             foreach (var method in methods)
             {
-                var attribute = method.GetCustomAttribute(typeof(MetaCommandAttribute)) as MetaCommandAttribute;
+                var attribute = method.GetCustomAttribute<MetaCommandAttribute>();
                 if (attribute is null)
                 {
                     continue;
@@ -524,7 +524,7 @@ namespace Repl
 
             if (args.Count != parameters.Length)
             {
-                var parameterNames = string.Join(", ", parameters.Select(p => $"<{p.Name}>"));
+                var parameterNames = string.Join(" ", parameters.Select(p => $"<{p.Name}>"));
                 Console.ForegroundColor = ConsoleColor.Red;
                 Console.WriteLine($"error: invalid number of arguments");
                 Console.WriteLine($"usage: #{command.Name} {parameterNames}");
@@ -532,7 +532,8 @@ namespace Repl
                 return;
             }
 
-            command.Method.Invoke(this, args.ToArray());
+            var instance = command.Method.IsStatic ? null : this;
+            command.Method.Invoke(instance, args.ToArray());
         }
 
         protected abstract bool IsCompleteSubmission(string text);
