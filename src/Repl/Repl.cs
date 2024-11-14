@@ -8,7 +8,7 @@ namespace Repl
 {
     internal abstract class Repl
     {
-        private readonly List<MetaCommand> _metaCommands = new List<MetaCommand>();
+        private readonly List<MetaCommand> metaCommands = new List<MetaCommand>();
         private readonly List<string> submissionHistory = new();
         private int submissionHistoryIndex;
 
@@ -35,7 +35,7 @@ namespace Repl
                 }
 
                 var metaCommand = new MetaCommand(attribute.Name, attribute.Description, method);
-                _metaCommands.Add(metaCommand);
+                metaCommands.Add(metaCommand);
             }
         }
 
@@ -511,7 +511,7 @@ namespace Repl
                 args.RemoveAt(0);
             }
 
-            var command = _metaCommands.SingleOrDefault(mc => mc.Name == commandName);
+            var command = metaCommands.SingleOrDefault(mc => mc.Name == commandName);
             if (command is null)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
@@ -570,14 +570,36 @@ namespace Repl
         [MetaCommand("help", "Shows help")]
         protected void EvaluateHelp()
         {
-            var maxNameLength = _metaCommands.Max(mc => mc.Name.Length);
+            var maxNameLength = metaCommands.Max(mc => mc.Name.Length);
 
-            foreach (var metaCommand in _metaCommands.OrderBy(mc => mc.Name))
+            foreach (var metaCommand in metaCommands.OrderBy(mc => mc.Name))
             {
-                var paddedName = metaCommand.Name.PadRight(maxNameLength);
+                var metaParams = metaCommand.Method.GetParameters();
+                if (metaParams.Length == 0)
+                {
+                    var paddedName = metaCommand.Name.PadRight(maxNameLength);
 
-                Console.Out.WritePunctuation("#");
-                Console.Out.WriteIdentifier(paddedName);
+                    Console.Out.WritePunctuation("#");
+                    Console.Out.WriteIdentifier(paddedName);
+                }
+                else
+                {
+                    Console.Out.WritePunctuation("#");
+                    Console.Out.WriteIdentifier(metaCommand.Name);
+                    foreach (var pi in metaParams)
+                    {
+                        Console.Out.WriteSpace();
+                        Console.Out.WritePunctuation("<");
+                        Console.Out.WriteIdentifier(pi.Name!);
+                        Console.Out.WritePunctuation(">");
+                    }
+                    Console.Out.WriteLine();
+                    Console.Out.WriteSpace();
+                    for (int _ = 0; _ < maxNameLength; _++)
+                    {
+                        Console.Out.WriteSpace();
+                    }
+                }
                 Console.Out.WriteSpace();
                 Console.Out.WriteSpace();
                 Console.Out.WriteSpace();
