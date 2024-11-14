@@ -7,7 +7,7 @@ namespace Repl
 {
     internal sealed class MoonwalkRepl : Repl
     {
-        private static bool loadingSubmission;
+        private bool loadingSubmission;
         private static readonly Compilation emptyCompilation = new Compilation();
         private Compilation? previous;
         private bool showTree;
@@ -231,7 +231,7 @@ namespace Repl
             Directory.Delete(GetSubmissionsDirectory(), recursive: true);
         }
 
-        private static void SaveSubmission(string text)
+        private void SaveSubmission(string text)
         {
             if (loadingSubmission)
             {
