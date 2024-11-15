@@ -67,7 +67,7 @@ namespace Repl
         {
             private readonly Action<string> lineRenderer;
             private readonly ObservableCollection<string> submissionDocument;
-            private readonly int cursorTop;
+            private int cursorTop;
             private int renderedLineCount;
             private int currentLine;
             private int currentCharacter;
@@ -94,6 +94,15 @@ namespace Repl
 
                 foreach (var line in submissionDocument)
                 {
+                    if (cursorTop + lineCount >= Console.WindowHeight)
+                    {
+                        Console.SetCursorPosition(0, Console.WindowHeight - 1);
+                        Console.WriteLine();
+                        if (cursorTop > 0)
+                        {
+                            cursorTop--;
+                        }
+                    }
                     Console.SetCursorPosition(0, cursorTop + lineCount);
                     Console.ForegroundColor = ConsoleColor.Green;
 
@@ -108,7 +117,7 @@ namespace Repl
 
                     Console.ResetColor();
                     lineRenderer(line);
-                    Console.WriteLine(new string(' ', Console.WindowWidth - line.Length));
+                    Console.Write(new string(' ', Console.WindowWidth - line.Length - 2));
                     lineCount++;
                 }
 
