@@ -54,7 +54,7 @@ namespace Repl
             }
         }
 
-        [MetaCommand("cls", "Clears the screen")]
+        [MetaCommand("clear", "Clears the screen")]
         private void EvaluateCls()
         {
             Console.Clear();
@@ -150,7 +150,6 @@ namespace Repl
 
             return true;
         }
-
 
         protected override void EvaluateSubmission(string text)
         {
