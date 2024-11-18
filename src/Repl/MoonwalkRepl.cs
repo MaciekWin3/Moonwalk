@@ -127,6 +127,10 @@ namespace Repl
             compilation.EmitTree(symbol, Console.Out);
         }
 
+
+        [MetaCommand("exit", "Exits application")]
+        private void EvaluateExit() => Environment.Exit(0);
+
         protected override bool IsCompleteSubmission(string text)
         {
             if (string.IsNullOrEmpty(text))
