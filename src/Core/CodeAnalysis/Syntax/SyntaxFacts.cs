@@ -51,7 +51,7 @@
                 "else" => SyntaxKind.ElseKeyword,
                 "while" => SyntaxKind.WhileKeyword,
                 "for" => SyntaxKind.ForKeyword,
-                "func" => SyntaxKind.FunctionKeyword,
+                "fn" => SyntaxKind.FunctionKeyword,
                 "in" => SyntaxKind.InKeyword,
                 _ => SyntaxKind.IdentifierToken
             };
@@ -114,7 +114,7 @@
                 SyntaxKind.ElseKeyword => "else",
                 SyntaxKind.FalseKeyword => "false",
                 SyntaxKind.ForKeyword => "for",
-                SyntaxKind.FunctionKeyword => "func",
+                SyntaxKind.FunctionKeyword => "fn",
                 SyntaxKind.TrueKeyword => "true",
                 SyntaxKind.IfKeyword => "if",
                 SyntaxKind.LetKeyword => "let",

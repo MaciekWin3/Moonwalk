@@ -22,7 +22,7 @@ For now the syntax is still in flux, but here is a simple example of what I am a
 import Terminal.Gui;
 
 module Main {
-	pub func Main(args: string[]): void {
+	pub fn Main(args: string[]): void {
 		Application.Init();
 
 		let label: Label = create_label("Hello, World!");
@@ -32,7 +32,7 @@ module Main {
 		Application.Shutdown();
 	}
 
-	prv func CreateLabel(text: string): Label {
+	prv fn CreateLabel(text: string): Label {
 		let label = new Label(text) {
 			X = Pos.Center(),
 			Y = Pos.Center(),
@@ -41,7 +41,7 @@ module Main {
 		return label;
 	}
 
-	prv func ImportExample(): void {
+	prv fn ImportExample(): void {
 		Utils.Print("Hello, World");
 	}
 }
@@ -62,7 +62,7 @@ module Utils {
 		}
 	}
 
-	pub func Print(text: string): void {
+	pub fn Print(text: string): void {
 		Console.WriteLine(string);
 	}
 }
@@ -72,7 +72,7 @@ module Main.Tests {
 	import NUnit;
 
 	[Test]
-	pub func ShoudlAddTwoNumbers(): void {
+	pub fn ShouldAddTwoNumbers(): void {
 		let result = 1 + 1;
 		Assert.AreEqual(2, result);
 	}
