@@ -126,7 +126,7 @@ namespace Core.Tests.CodeAnalysis
         public void EvaluatorFunctionReturnMissing()
         {
             var text = @"
-                func [add](a: int, b: int): int
+                fn [add](a: int, b: int): int
                 {
                 }
             ";
@@ -186,7 +186,7 @@ namespace Core.Tests.CodeAnalysis
         public void EvaluatorFunctionParametersNoInfiniteLoop()
         {
             var text = @"
-                func hi(name: string[[[=]]][)]
+                fn hi(name: string[[[=]]][)]
                 {
                     print(""Hi "" + name + ""!"" )
                 }[]
@@ -364,7 +364,7 @@ namespace Core.Tests.CodeAnalysis
         public void Evaluator_Void_Function_Should_Not_Return_Value()
         {
             var text = @"
-                func test()
+                fn test()
                 {
                     return [1]
                 }
@@ -381,7 +381,7 @@ namespace Core.Tests.CodeAnalysis
         public void Evaluator_Function_With_ReturnValue_Should_Not_Return_Void()
         {
             var text = @"
-                func test(): int
+                fn test(): int
                 {
                     [return]
                 }
@@ -398,7 +398,7 @@ namespace Core.Tests.CodeAnalysis
         public void Evaluator_Not_All_Code_Paths_Return_Value()
         {
             var text = @"
-                func [test](n: int): bool
+                fn [test](n: int): bool
                 {
                     if (n > 10)
                        return true
@@ -416,7 +416,7 @@ namespace Core.Tests.CodeAnalysis
         public void Evaluator_Expression_Must_Have_Value()
         {
             var text = @"
-                func test(n: int)
+                fn test(n: int)
                 {
                     return
                 }
@@ -460,7 +460,7 @@ namespace Core.Tests.CodeAnalysis
         public void Evaluator_Parameter_Already_Declared()
         {
             var text = @"
-                func sum(a: int, b: int, [a: int]): int
+                fn sum(a: int, b: int, [a: int]): int
                 {
                     return a + b + c
                 }
@@ -477,7 +477,7 @@ namespace Core.Tests.CodeAnalysis
         public void Evaluator_Function_Must_Have_Name()
         {
             var text = @"
-                func [(]a: int, b: int): int
+                fn [(]a: int, b: int): int
                 {
                     return a + b
                 }
@@ -494,7 +494,7 @@ namespace Core.Tests.CodeAnalysis
         public void Evaluator_Wrong_Argument_Type()
         {
             var text = @"
-                func test(n: int): bool
+                fn test(n: int): bool
                 {
                     return n > 10
                 }
@@ -513,7 +513,7 @@ namespace Core.Tests.CodeAnalysis
         public void EvaluatorBadType()
         {
             var text = @"
-                func test(n: [invalidtype])
+                fn test(n: [invalidtype])
                 {
                 }
             ";
