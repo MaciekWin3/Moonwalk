@@ -23,8 +23,11 @@ namespace Core.Tests.CodeAnalysis.Syntax
             token.Text.Should().Be("\"text");
 
             var diagnostic = diagnostics.Should().ContainSingle().Which;
-            diagnostic.Location.Span.Should().Be(new TextSpan(0, 1));
-            diagnostic.Message.Should().Be("Unterminated string literal.");
+            Assert.Multiple(() =>
+            {
+                Assert.That(new TextSpan(0, 1), Is.EqualTo(diagnostic.Location.Span));
+                Assert.That(diagnostic.Message, Is.EqualTo("Unterminated string literal."));
+            });
 
         }
 
