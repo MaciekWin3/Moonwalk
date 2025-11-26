@@ -50,9 +50,12 @@ namespace Core.Tests.CodeAnalysis.Syntax
         {
             try
             {
-                Assert.That(enumerator.MoveNext(), Is.True);
-                Assert.That(enumerator.Current.Kind, Is.EqualTo(kind));
-                Assert.That(enumerator.Current, Is.Not.InstanceOf<SyntaxToken>());
+                Assert.Multiple(() =>
+                {
+                    Assert.That(enumerator.MoveNext(), Is.True);
+                    Assert.That(enumerator.Current.Kind, Is.EqualTo(kind));
+                    Assert.That(enumerator.Current, Is.Not.InstanceOf<SyntaxToken>());
+                });
             }
             catch when (MarkFailed())
             {
